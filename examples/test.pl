@@ -17,7 +17,7 @@ var f, g;
 begin
 	f := x;
 	g := y;
-	while f <> g do
+	while f != g do
 	begin
 		if f < g then g := g – f;
 		if g < f then f := f – g;
