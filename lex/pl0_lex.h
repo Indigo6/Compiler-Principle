@@ -63,7 +63,6 @@ typedef struct _tPL0Lex {
 	 int line_number; //to record which line of the code is scanning.
 	 int start, end;  //to record the start and end index of the last token.
 	 char token[MAX_TOKEN_LEN + 1];  //to store the last token
-	 BOOL (*get_token)(PL0Lex * lex);  //  function pointer.
 
 } PL0Lex;
 
