@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "../common/common.h"
 #include "pl0_lex.h"
+#include <ctype.h>
 
 const char * TOKEN_RESERVED_WORDS[NRW] = {"var", "const", "procedure", "begin", "end", "if", "then", "do", "while", "call", "odd"};
 const char * TOKEN_SYMBOLS[NSYM] = { "+", "-", "*", "/", "=", "!=", "<", "<=", ">", ">=", "(", ")", ",", ";", ".", ":=" };
@@ -25,31 +26,59 @@ BOOL PL0Lex_destroy(PL0Lex * lex)
 BOOL PL0Lex_get_token(PL0Lex * lex)
 {
     char charcter;
+    char next; //to determine which situation
     unsigned int index = 0; //means the index of the character in the token,initialize to 0.
-    while((charcter =(char)fgetc(fin)) != EOF){
-        if(charcter == '\n' || charcter == ' ' || charcter == '\t'){
+    while((charcter =(char)fgetc(fin)) != EOF){ //means get a complete token
+        if(charcter == '\n' ||charcter == '\t'){
+            lex->line_number ++;
+            lex->start = 0;
+            lex ->end = 0;
+        }
+        else if(charcter == ' '){
 
         }
     }
 	return FALSE;
 }
 
-void analysis(char * word){
+void analysis(const char * word){
 
 }
 
-BOOL is_reservedword(char * word){
+BOOL is_reservedword(const char * word){
 
 }
 
-BOOL is_symbol(char * word){
+BOOL is_symbol(const char * word){
 
 }
 
-BOOL is_id(char* word){
-
+BOOL is_id(const char* word){
+    char tmp = word[0];
+    if(!isalpha(tmp) && tmp!='_'){
+        return FALSE;
+    }
+    else{
+        unsigned index = 1;
+        char tmp2;
+        tmp2 = word[index];
+        while(tmp2!='\0'){
+            if(!isalnum(tmp2) && tmp2!='_'){
+                return FALSE;
+            }
+            else{
+                index ++;
+                tmp2 = word[index];
+                if(index > 10){
+                    return FALSE;
+                }
+            }
+        }
+        return TRUE;
+    }
 }
 
-BOOL is_num(char * word){
+
+BOOL is_num(const char * word){
 
 }
