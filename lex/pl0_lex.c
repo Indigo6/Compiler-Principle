@@ -59,6 +59,7 @@ BOOL is_id(char* word){
 BOOL is_num(char * word){
     bool neg_flag = false;
     if(word[0] == '-') neg_flag = true;//判断是不是负数
+    if(neg_flag && word[1] == '\0') return false;
     if(!neg_flag){//正数情况
       for(int i = 0; word[i]!='\0';i++){
         if(word[i]<'0' || word[i]>9) return false;//全为数字，否则false
