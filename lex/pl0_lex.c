@@ -25,20 +25,7 @@ BOOL PL0Lex_destroy(PL0Lex * lex)
 
 BOOL PL0Lex_get_token(PL0Lex * lex)
 {
-    char charcter;
-    char next; //to determine which situation
-    unsigned int index = 0; //means the index of the character in the token,initialize to 0.
-    while((charcter =(char)fgetc(fin)) != EOF){ //means get a complete token
-        if(charcter == '\n' ||charcter == '\t'){
-            lex->line_number ++;
-            lex->start = 0;
-            lex ->end = 0;
-        }
-        else if(charcter == ' '){
-
-        }
-    }
-	return FALSE;
+    
 }
 
 void analysis(const char * word){
