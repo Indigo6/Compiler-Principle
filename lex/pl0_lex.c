@@ -103,19 +103,23 @@ BOOL is_id(const char* word){
 
 BOOL is_num(const char * word){
     BOOL neg_flag = FALSE;
+    int range = 9;
     if(word[0] == '-') neg_flag = TRUE;//判断是不是负数
     if(neg_flag && word[1] == '\0') return FALSE;
     if(!neg_flag){//正数情况
+      if(word[0]== 0) range = 10;
       for(int i = 0; word[i]!='\0';i++){
+	if(i == range) return FALSE;//超出range，false
         if(word[i]<'0' || word[i]>'9') return FALSE;//全为数字，否则false
-        if(i>8) return FALSE;//超出range，false
       }
       return TRUE;//通过考验，true
     }
     else{//负数情况，同上
+      if(word[1] == 0) range = 11;
+      else range = 10; 
       for(int i = 1; word[i]!='\0';i++){
+	if(i == range) return FALSE;
         if(word[i]<'0' || word[i]>'9') return FALSE;
-        if(i>9) return FALSE;
       }
       return TRUE;
     }
