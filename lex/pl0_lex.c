@@ -3,6 +3,7 @@
 #include "pl0_lex.h"
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 const char * TOKEN_RESERVED_WORDS[NRW] = {"var", "const", "procedure", "begin", "end", "if", "then", "do", "while", "call", "odd"};
 const char * TOKEN_SYMBOLS[NSYM] = { "+", "-", "*", "/", "=", "!=", "<", "<=", ">", ">=", "(", ")", ",", ";", ".", ":=" };
@@ -29,8 +30,37 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     
 }
 
-void analysis(const char * word){
-
+void analysis(const char * word, PL0Lex * lex){
+    int test = is_reservedword(word);
+    if(test!=-1){
+        lex->last_token_type = test + TOKEN_RESWORDS + 1;
+        return;
+    }
+    test = is_symbol(word);
+    if(test!=-1){
+        lex->last_token_type = test + TOKEN_SYMBOL + 1;
+        return;
+    }
+    if(is_num(word)){
+        lex->last_token_type = TOKEN_NUMBER;
+        if (word[0] == '-'){
+            int tmp = atoi(word+1);
+            lex->last_num = -1*tmp;
+        }
+        else{
+            int tmp = atoi(word);
+            lex->last_num = tmp;
+        }
+        return;
+    }
+    if(is_id(word)){
+        lex->last_token_type = TOKEN_IDENTIFIER;
+        strcpy(lex->last_id,word);
+        return;
+    }
+    else{
+        lex->last_token_type = TOKEN_NULL;
+    }
 }
 
 int is_reservedword(const char * word){  //return the index of the reserved word table or -1(not find)
