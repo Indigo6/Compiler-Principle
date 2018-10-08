@@ -115,7 +115,7 @@ BOOL is_num(const char * word){
     }
     else{//负数情况，同上
       for(int i = 1; word[i]!='\0';i++){
-        if(word[i]<'0' || word[i]>'9') return TRUE;
+        if(word[i]<'0' || word[i]>'9') return FALSE;
         if(i>9) return FALSE;
       }
       return TRUE;
