@@ -9,6 +9,7 @@ PL0Lex * PL0Lex_create(PL0Compiler * parent)
 {
 	PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	lex->compiler = parent;
+	lex->get_token = &PL0Lex_get_token;
 
 	return lex;
 }
