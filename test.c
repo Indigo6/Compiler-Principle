@@ -44,11 +44,11 @@ int main(int argc, char * argv[])
 		}
 		else if (lex->last_token_type == TOKEN_IDENTIFIER)
 		{
-			printf("Identifier:     %-10s %d:%d-%d\n",lex->last_id,lex->line_num,lex->start,lex->end);
+			printf("Identifier:    %-10s %d:%d-%d\n",lex->last_id,lex->line_num,lex->start,lex->end);
 		}
 		else if (lex->last_token_type == TOKEN_NUMBER)
 		{
-			printf("Number:         %-10d %d:%d-%d\n",lex->last_num,lex->line_num,lex->start,lex->end);
+			printf("Number:        %-10d %d:%d-%d\n",lex->last_num,lex->line_num,lex->start,lex->end);
 		}
 		else if (lex->last_token_type > TOKEN_RESWORDS)
 		{
