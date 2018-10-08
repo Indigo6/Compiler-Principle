@@ -91,3 +91,60 @@ BOOL is_num(const char * word){
       return TRUE;
     }
 }
+
+void outputWord(PL0Lex * lex){//输出函数，统一格式：【文件类型：（15位）】【空格】【token（10位）】【空格】【行数】【:】【起始位】【-】【结束位】【\n】
+    FILE *fout;
+    fout = fopen("dataout.txt",a+);
+    
+    switch(lex->last_token_type){
+      case 0 :{//非法token
+        fprintf(fout,"error in line %d, %d-%d\n",lex->line_num,lex->start,lex->end);//报错格式：……
+        break;
+      }
+      case 1 :{//标识符
+        fprintf(fout,"Identifier:     %-10s %d:%d-%d\n",lex->last_id,lex->line_num,lex->start,lex->end);
+	break;
+      } 
+      case 2 :{//数字
+	fprintf(fout,"Number:         %-10d %d:%d-%d\n",lex->last_num,lex->line_num,lex->start,lex->end);
+	break;
+      }
+
+      case 4 :
+      case 5 :
+      case 6 :
+      case 7 :
+      case 8 :
+      case 9 :
+      case 10:
+      case 11:
+      case 12:
+      case 13:
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:{//标点符号
+	fprintf(fout,"Symbol:        %-10s %d:%d-%d\n",TOKEN_SYMBOLS[lex->last_token_type-4],lex->line_num,lex->start,lex->end);
+	break;
+      }
+      
+      case 21:
+      case 22:
+      case 23:
+      case 24:
+      case 25:
+      case 26:
+      case 27:
+      case 28:
+      case 29:
+      case 30:
+      case 31:{//保留字
+	fprintf(fout,"Reserved word: %-10s %d:%d-%d\n",TOKEN_RESERVED_WORDS[lex->last_token_type-21],lex->line_num,lex->start,lex->end);
+	break;
+      }
+      default:break;
+    }
+    fclose(fout);   
+}
