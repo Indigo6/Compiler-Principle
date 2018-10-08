@@ -6,6 +6,7 @@
 #define NSYM		16	/* Number of symbols */
 #define MAX_NUM_LEN	9	/* Maximum length of a number, set to 9 to fit in range of C (-2147483648 to 2147483647) */
 #define MAX_ID_LEN	10	/* Maximum length of an identifier */
+#define MAX_TOKEN_LEN  10  //Maximum length
 
 struct _tPL0Compiler;
 
@@ -56,9 +57,15 @@ typedef struct _tPL0Lex {
 	char last_id[MAX_ID_LEN + 1];
 	int last_num;
 
+
 	/** --------------------------
 	 * TODO: Your variables here
 	 */
+	 int line_number; //to record which line of the code is scanning.
+	 int start, end;  //to record the start and end index of the last token.
+	 char token[MAX_TOKEN_LEN];  //to store the last token
+
+
 } PL0Lex;
 
 PL0Lex * PL0Lex_create(struct _tPL0Compiler * parent);
