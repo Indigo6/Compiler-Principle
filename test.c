@@ -60,6 +60,7 @@ int main(int argc, char * argv[])
 
 	/* Cleanup */
 	fclose(fin);
+	PL0Compiler_destroy(compiler);
 
 	/* Finish */
 	printf("=== Normal end for testing. ===\n");
