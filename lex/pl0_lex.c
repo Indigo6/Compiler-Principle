@@ -2,6 +2,7 @@
 #include "../common/common.h"
 #include "pl0_lex.h"
 #include <string.h>
+#include <ctype.h>
 
 const char * TOKEN_RESERVED_WORDS[NRW] = {"var", "const", "procedure", "begin", "end", "if", "then", "do", "while", "call", "odd"};
 const char * TOKEN_SYMBOLS[NSYM] = { "+", "-", "*", "/", "=", "!=", "<", "<=", ">", ">=", "(", ")", ",", ";", ".", ":=" };
@@ -77,14 +78,14 @@ BOOL is_num(const char * word){
     if(neg_flag && word[1] == '\0') return FALSE;
     if(!neg_flag){//正数情况
       for(int i = 0; word[i]!='\0';i++){
-        if(word[i]<'0' || word[i]>9) return FALSE;//全为数字，否则false
+        if(word[i]<'0' || word[i]>'9') return FALSE;//全为数字，否则false
         if(i>8) return FALSE;//超出range，false
       }
       return TRUE;//通过考验，true
     }
     else{//负数情况，同上
       for(int i = 1; word[i]!='\0';i++){
-        if(word[i]<'0' || word[i]>9) return TRUE;
+        if(word[i]<'0' || word[i]>'9') return TRUE;
         if(i>9) return FALSE;
       }
       return TRUE;
