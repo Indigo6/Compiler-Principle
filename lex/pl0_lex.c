@@ -28,29 +28,50 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     
 }
 
-void analysis(char * word){
+void analysis(const char * word){
 
 }
 
-int is_reservedword(char * word){  //return the index of the reserved word table or -1(not find)
+int is_reservedword(const char * word){  //return the index of the reserved word table or -1(not find)
     for(int i = 0;i<NRW;i++){
       if(strcmp(TOKEN_RESERVED_WORDS[i],word) == 0) return i;
     }
     return -1;
 }
 
-int is_symbol(char * word){  //return the index of the symbol table or -1(not find)
+int is_symbol(const char * word){  //return the index of the symbol table or -1(not find)
     for(int i = 0;i<NSYM;i++){
       if(strcmp(TOKEN_SYMBOLS[i],word) == 0) return i;
     }
     return -1;
 }
 
-BOOL is_id(char* word){
-
+BOOL is_id(const char* word){
+    char tmp = word[0];
+    if(!isalpha(tmp) && tmp!='_'){
+        return FALSE;
+    }
+    else{
+        unsigned index = 1;
+        char tmp2;
+        tmp2 = word[index];
+        while(tmp2!='\0'){
+            if(!isalnum(tmp2) && tmp2!='_'){
+                return FALSE;
+            }
+            else{
+                index ++;
+                tmp2 = word[index];
+                if(index > 10){
+                    return FALSE;
+                }
+            }
+        }
+        return TRUE;
+    }
 }
 
-BOOL is_num(char * word){
+BOOL is_num(const char * word){
     BOOL neg_flag = FALSE;
     if(word[0] == '-') neg_flag = TRUE;//判断是不是负数
     if(neg_flag && word[1] == '\0') return FALSE;
