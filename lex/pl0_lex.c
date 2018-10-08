@@ -35,21 +35,42 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
 }
 
 void analysis(char * word){
-
+    
 }
 
 BOOL is_reservedword(char * word){
-
+    for(int i = 0;i<NRW;i++){
+      if(strcmp(TOKEN_RESERVED_WORDS[i],word) == 0) return true;
+    }
+    return false;
 }
 
 BOOL is_symbol(char * word){
-
+    for(int i = 0;i<NSYM;i++){
+      if(strcmp(TOKEN_SYMBOLS[i],word) == 0) return true;
+    }
+    return false;
 }
 
 BOOL is_id(char* word){
-
+       
 }
 
 BOOL is_num(char * word){
-
+    bool neg_flag = false;
+    if(word[0] == '-') neg_flag = true;//判断是不是负数
+    if(!neg_flag){//正数情况
+      for(int i = 0; word[i]!='\0';i++){
+        if(word[i]<'0' || word[i]>9) return false;//全为数字，否则false
+        if(i>8) return false;//超出range，false
+      }
+      return true;//通过考验，true
+    }
+    else{//负数情况，同上
+      for(int i = 1; word[i]!='\0';i++){
+        if(word[i]<'0' || word[i]>9) return false;
+        if(i>9) return false;
+      }
+      return true;
+    }
 }
