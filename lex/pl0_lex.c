@@ -3,7 +3,6 @@
 #include "pl0_lex.h"
 #include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
 
 const char * TOKEN_RESERVED_WORDS[NRW] = {"var", "const", "procedure", "begin", "end", "if", "then", "do", "while", "call", "odd"};
 const char * TOKEN_SYMBOLS[NSYM] = { "+", "-", "*", "/", "=", "!=", "<", "<=", ">", ">=", "(", ")", ",", ";", ".", ":=" };
