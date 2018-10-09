@@ -19,7 +19,7 @@ typedef enum _tPL0TokenType {
 	TOKEN_TIMES,	/* * */
 	TOKEN_SLASH,	/* / */
 	TOKEN_EQU,  	/* = */
-	TOKEN_NEQ,  	/* <> */
+	TOKEN_NEQ,  	/* != */
 	TOKEN_LES,  	/* < */
 	TOKEN_LEQ,  	/* <= */
 	TOKEN_GTR,  	/* > */
