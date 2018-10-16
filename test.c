@@ -40,23 +40,23 @@ int main(int argc, char * argv[])
 		assert(lex->last_token_type != TOKEN_SYMBOL);
 		if (lex->last_token_type == TOKEN_NULL)
 		{
-			printf("error in line %d, %d-%d\n",lex->line_num,lex->start,lex->end);
+			printf("error in line %d, %d-%d\n",lex->line_number,lex->start,lex->end);
 		}
 		else if (lex->last_token_type == TOKEN_IDENTIFIER)
 		{
-			printf("Identifier:    %-10s %d:%d-%d\n",lex->last_id,lex->line_num,lex->start,lex->end);
+			printf("Identifier:    %-10s %d:%d-%d\n",lex->last_id,lex->line_number,lex->start,lex->end);
 		}
 		else if (lex->last_token_type == TOKEN_NUMBER)
 		{
-			printf("Number:        %-10d %d:%d-%d\n",lex->last_num,lex->line_num,lex->start,lex->end);
+			printf("Number:        %-10d %d:%d-%d\n",lex->last_num,lex->line_number,lex->start,lex->end);
 		}
 		else if (lex->last_token_type > TOKEN_RESWORDS)
 		{
-			printf("Reserved word: %-10s %d:%d-%d\n",TOKEN_RESERVED_WORDS[lex->last_token_type - TOKEN_RESWORDS - 1],lex->line_num,lex->start,lex->end);
+			printf("Reserved word: %-10s %d:%d-%d\n",TOKEN_RESERVED_WORDS[lex->last_token_type - TOKEN_RESWORDS - 1],lex->line_number,lex->start,lex->end);
 		}
 		else
 		{
-			printf("Symbol:        %-10s %d:%d-%d\n",TOKEN_SYMBOLS[lex->last_token_type - TOKEN_SYMBOL - 1],lex->line_num,lex->start,lex->end);
+			printf("Symbol:        %-10s %d:%d-%d\n",TOKEN_SYMBOLS[lex->last_token_type - TOKEN_SYMBOL - 1],lex->line_number,lex->start,lex->end);
 		}
 	}
 
