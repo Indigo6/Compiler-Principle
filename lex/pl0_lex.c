@@ -124,6 +124,8 @@ BOOL get_token(PL0Lex * lex){
                 else{//symbol或分隔符
                     if(letter == EOF)  lex->isEOF = TRUE;
                     lex->end = lex->offset;
+                    lex->offset++;
+                    lex->token[iter] = '\0';
                     fseek(fin,-1,SEEK_CUR);//回退
                     return 1;
                 }
