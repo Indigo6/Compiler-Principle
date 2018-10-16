@@ -14,6 +14,8 @@ PL0Lex * PL0Lex_create(PL0Compiler * parent)
 	lex->line_number = 1;
 	lex->start = 0;
 	lex->end = 0;
+	lex->offset = 0;
+	lex->isEOF = FALSE;
 
 	return lex;
 }
@@ -31,6 +33,19 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     BOOL _get_token; //Signal for result of getting token, 0 for failure, 1 for success
     lex->start = 0;lex->end = 0;
     _get_token = get_token(lex);
+    if(_get_token){
+        analysis(lex->token,lex);
+        return TRUE;
+    }
+    else{
+        if(lex->isEOF){
+            return FALSE;
+        }
+        else{
+            lex->last_token_type = TOKEN_NULL;
+            return TRUE;
+        }
+    }
 }
 
 
@@ -80,7 +95,7 @@ BOOL get_token(PL0Lex * lex){
             case 1:{
                 letter = fgetc(fin);
                 if(letter == EOF) {
-                    lex -> isEOF = TRUE;
+                    lex->isEOF = TRUE;
                     return 0;
                 }
                 if(isalnum(letter) || letter=='_'){//token
