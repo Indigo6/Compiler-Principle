@@ -28,7 +28,7 @@ BOOL PL0Lex_destroy(PL0Lex * lex)
 
 BOOL PL0Lex_get_token(PL0Lex * lex)
 {
-    BOOL _get_token; //Signal for result of getting token, 0 for failure, 1 for success
+    BOOL _get_token;            //Signal for result of getting token, 0 for failure, 1 for success
     lex->start = 0;lex->end = 0;
     lex->overlong = 0;
     _get_token = get_token(lex);
