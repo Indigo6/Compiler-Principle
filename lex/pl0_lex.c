@@ -61,6 +61,7 @@ BOOL get_token(PL0Lex * lex){
             case 0:{
 		    	letter = fgetc(fin);
         	    if(letter == EOF){
+        	        lex->isEOF = TRUE;
                     return 0;
                 }
 		    	else if(isalnum(letter) || letter == '_'){//token
@@ -78,7 +79,10 @@ BOOL get_token(PL0Lex * lex){
             }
             case 1:{
                 letter = fgetc(fin);
-                if(letter == EOF) return 0;
+                if(letter == EOF) {
+                    lex -> isEOF = TRUE;
+                    return 0;
+                }
                 if(isalnum(letter) || letter=='_'){//token
                     state = 1;//跳转到状态s1
                     lex->offset++;//行内位置++
@@ -112,6 +116,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[0] = sym1;
                     lex->token[1] = '\0';
                     lex->end = lex->offset;
+                    lex -> isEOF = TRUE;
                     return 1;
                 }
                 else{
@@ -142,6 +147,12 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[2] = '\0';
                     return 1;
                 }
+                else if(sym1=='/' && sym2=='/'){
+                    state = 4;
+                }
+                else if(sym1=='/' && sym2 == '*'){
+                    state =5;
+                }
                 else{
                     fseek(fin,-1,SEEK_CUR);
                     lex->offset --;
@@ -160,17 +171,19 @@ BOOL get_token(PL0Lex * lex){
                     lex->offset = 0;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 break;
             }
             case 5:{
-                letter = fgect(fin);
+                letter = fgetc(fin);
                 if(letter == '*'){
                     state = 6;
                     lex->offset++;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 else{
@@ -181,11 +194,12 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 6:{
-                letter = fgec(fin);
+                letter = fgetc(fin);
                 if(letter == '/'){
                     state = 0;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 else{

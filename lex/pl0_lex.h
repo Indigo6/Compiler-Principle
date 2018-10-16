@@ -65,6 +65,7 @@ typedef struct _tPL0Lex {
 	 int offset;	// temp variable for offset in line
 	 int iter;	//array 'token' index
 	 char token[MAX_TOKEN_LEN + 1];  //to store the last token
+	 BOOL isEOF;
 
 } PL0Lex;
 
