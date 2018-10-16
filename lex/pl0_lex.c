@@ -34,23 +34,61 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
 }
 BOOL get_token(PL0Lex * lex){
     unsigned int state = 0;
-    char letter;
+    char letter1,letter2;
     while(1) {
-        letter = fgetc(fin);
-        if (letter == EOF) {
-            return 0;
-        } else {
             switch (state) {
                 case 0:
                 case 1:
-                case 2:
-                case 3:
+                case 2:{
+                    letter2 = (char)fgetc(fin);
+                    if(letter2==EOF){
+                        lex->token[0] = letter1;
+                        lex->token[1] = '\0';
+                        lex -> start = lex -> offset;
+                        lex -> end = lex->offset;
+                        return TRUE;
+                    }
+                    else{
+                        lex->offset ++;
+                    if(is_symbol(letter2)!=-1){
+                        state = 3;
+                        continue;
+                    } else{
+                        fseek(fin, -1, SEEK_CUR);
+                        lex -> offset --;
+                        lex -> end = lex->offset;
+                        lex -> token[0] = letter1;
+                        lex -> token[1] = '\0';
+                        return TRUE;
+                    }
+                    }
+                }
+                case 3:{
+                    char tmp[3];
+                    tmp[0] = letter1;
+                    tmp[1] = letter2;
+                    tmp[2] = '\0';
+                    if(is_symbol(tmp)!=-1){
+                        lex -> token[0] = letter1;
+                        lex -> token[1] = letter2;
+                        lex -> token[2] = '\0';
+                        lex -> end = lex -> offset;
+                        return TRUE;
+                    }
+                    else{
+                        fseek(fin,-1,SEEK_CUR);
+                        lex -> offset --;
+                        lex -> token[0] = letter1;
+                        lex -> token[1] = '\0';
+                        lex -> end = lex->offset;
+                        return TRUE;
+                    }
+                }
                 case 4:
                 case 5:
                 case 6:
-                case 7:
             }
-        }
+        break;
     }
 }
 BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
