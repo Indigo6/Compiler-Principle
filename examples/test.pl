@@ -19,8 +19,8 @@ begin
 	g := y;
 	while f != g do
 	begin
-		if f < g then g := g – f;
-		if g < f then f := f – g;
+		if f < g then g := g - f;
+		if g < f then f := f - g;
 	end
 end;
 
