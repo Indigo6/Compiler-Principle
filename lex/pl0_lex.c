@@ -67,7 +67,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->start = lex->offset++;
                     lex->token[iter++] = letter;
                 }
-                else if(Is_split(lex,letter);
+                else if(Is_split(lex,letter));
                 else{
                     state = 2;
                     lex->start = lex->offset++;
