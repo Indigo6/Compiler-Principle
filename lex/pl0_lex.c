@@ -30,7 +30,21 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
 {
     BOOL _get_token; //Signal for result of getting token, 0 for failure, 1 for success
     lex->start = 0;lex->end = 0;
+    lex->overlong = 0;
     _get_token = get_token(lex);
+    if(!_get_token){
+        if(lex->overlong){
+            lex->last_token_type = TOKEN_NULL;
+            return TRUE;
+        }
+        else{
+            return 0;
+        }
+    }
+    else{
+        analysis(lex->token,lex);
+        return TRUE;
+    }
 }
 
 
@@ -60,6 +74,7 @@ BOOL get_token(PL0Lex * lex){
             case 0:{
 		    	letter = fgetc(fin);
         	    if(letter == EOF){
+        	        lex->isEOF = TRUE;
                     return 0;
                 }
 		    	else if(isalnum(letter) || letter == '_'){//token
@@ -81,6 +96,7 @@ BOOL get_token(PL0Lex * lex){
                     state = 1;//跳转到状态s1
                     lex->offset++;//行内位置++
                     if(iter > MAX_TOKEN_LEN){//长度超标
+                        lex->overlong = 1;
                         lex->token[0]='\0';//暂存数组首位置空
                         iter = 0;//暂存数组指针指向首位
                         while(1){
@@ -89,9 +105,14 @@ BOOL get_token(PL0Lex * lex){
                                 lex->offset++;
                                 continue;	
                             }
-                            if(letter == EOF) return 0;
-                            fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
-                            return 0;
+                            else if(letter == EOF){
+                                lex->isEOF = 1;
+                                return 0;
+                            }
+                            else{
+                                fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
+                                return 0;
+                            }
                         }
                     }
                     lex->token[iter] = letter;//存入暂存数组
@@ -99,6 +120,7 @@ BOOL get_token(PL0Lex * lex){
                     break;//继续该状态循环读入token
                 }
                 else{//symbol或分隔符
+                    if(letter == EOF)  lex->isEOF = TRUE;
                     lex->end = lex->offset;
                     fseek(fin,-1,SEEK_CUR);//回退
                     return 1;
@@ -111,6 +133,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[0] = sym1;
                     lex->token[1] = '\0';
                     lex->end = lex->offset;
+                    lex -> isEOF = TRUE;
                     return 1;
                 }
                 else{
@@ -141,6 +164,12 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[2] = '\0';
                     return 1;
                 }
+                else if(sym1=='/' && sym2=='/'){
+                    state = 4;
+                }
+                else if(sym1=='/' && sym2 == '*'){
+                    state =5;
+                }
                 else{
                     fseek(fin,-1,SEEK_CUR);
                     lex->offset --;
@@ -159,17 +188,19 @@ BOOL get_token(PL0Lex * lex){
                     lex->offset = 0;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 break;
             }
             case 5:{
-                letter = fgect(fin);
+                letter = fgetc(fin);
                 if(letter == '*'){
                     state = 6;
                     lex->offset++;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 else{
@@ -180,11 +211,12 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 6:{
-                letter = fgec(fin);
+                letter = fgetc(fin);
                 if(letter == '/'){
                     state = 0;
                 }
                 else if(letter == EOF){
+                    lex -> isEOF = TRUE;
                     return 0;
                 }
                 else{
