@@ -33,8 +33,7 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     _get_token = get_token(lex);
 }
 
-<<<<<<< HEAD
-BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
+BOOL Is_split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
     if(letter == '\t'){
         lex->offset += 4;   
     }
@@ -43,6 +42,7 @@ BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t
     }
     else if(letter == '\n'){
         lex->offset = 0;
+        lex->line_number++;
     }
     else return 0;
     return 1;
@@ -50,141 +50,154 @@ BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t
 
 BOOL get_token(PL0Lex * lex){
     char letter;
-    BOOL getted = 0; //signal of "has got non-' ','\t','\n' letter or not"
-    int cmt = 0;        // signal for comment , 0:no '/', 1:one '/', 2: '//', 3: '/* ...'; 
-                        //4:'/* ... *'
-    int _split = 0;     // signal for split letter;
-
-    letter = fgec(fin);
-    if(lex->offset == 0) lex->line_number++;
-    //All line_number' change due to '\n' right after token is handle next time
-    /*If '\n' in continuous blank or comment, handled after function 'split' according to
-        lex->offset(0 -> line_number+1) */
-
-    while(letter != EOF){
-        if(cmt == 1){       // Right after '/'
-            if(letter == '/'){  // type '//' comment
-                cmt = 2;
-                lex->iter = 0;
-                getted = 0;
+    int state = 0;
+    char sym1,sym2;
+    int iter = 0;
+    
+    while(1){
+        switch(state){
+            case 0:{
+		    	letter = fgetc(fin);
+        	    if(letter == EOF){
+                    return 0;
+                }
+		    	else if(isalnum(letter) || letter == '_'){//token
+		    		state = 1;//跳转到状态s1
+                    lex->start = lex->offset++;
+                    lex->token[iter++] = letter;
+                }
+                else if(Is_split(lex,letter);
+                else{
+                    state = 2;
+                    lex->start = lex->offset++;
+                    sym1 = letter;
+                }
+                break;
             }
-            else if(letter == '*'){  // type '/*' comment
-                cmt = 3;
-                lex->iter = 0;
-                getted = 0;
-            }
-            else{               //Not a comment;
-                lex->end = lex->offset - 1;
-                _split = split(lex,letter);
-                if(_split == 1){   // Just a divide symbol
-                    lex->token[lex->iter]= 0;
-                    lex->iter = 0;
+            case 1:{
+                letter = fgetc(fin);
+                if(letter == EOF) return 0;
+                if(isalnum(letter) || letter=='_'){//token
+                    state = 1;//跳转到状态s1
+                    lex->offset++;//行内位置++
+                    if(lex->iter > MAX_TOKEN_LEN){//长度超标
+                        lex->token[0]='\0';//暂存数组首位置空
+                        lex->iter = 0;//暂存数组指针指向首位
+                        while(1){
+                            letter = fgetc(fin);
+                            if(isalnum(letter) || letter=='_'){//跳过之后的一串token
+                                lex->offset++;
+                                continue;	
+                            }
+                            fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
+                            return 0;
+                        }
+                    }
+                    lex->token[iter] = letter;//存入暂存数组
+                    lex->iter++;//暂存数组的指针++
+                    break;//继续该状态循环读入token
+                }
+                else{//symbol或分隔符
+                    lex->end = lex->offset;
+                    fseek(fin,-1,SEEK_CUR);//回退
                     return 1;
                 }
-                else{               // Illegal '/...' pattern
-                    lex->offset++;
-                    lex->token[lex->iter] = letter;
-                    lex->iter++;
-                    cmt = 0;
-                }
+                break;
             }
-        }
-        else if(cmt == 2){  // Pattern '// ...'
-            if(letter == '\n'){     //Comment type 1 ended
-                lex->offset = 0;
-                lex->line_number++;
-                cmt = 0;
-                getted = 0;
-            }
-        }
-        else if(cmt == 3){          // Pattern '/* ...'
-            if(letter == '*'){      // Pattern '/* ... *'
-                cmt = 4;
-                lex->offset++;
-            }
-            else{                   // Pattern '/* ...'
-                _split = split(lex,letter);
-                if(_split == 1){
-                    if(lex->offset == 0){
-                        lex->line_number++;
-                    }
-                }
-                else{
-                    lex->offset++;
-                }
-            }
-        }
-        else if(cmt == 4){  // Pattern '/* ... *'
-            if(letter == '/'){
-                lex->offset++;
-                cmt = 0;    // Comment tpye 2 ended
-            }
-            else{
-                cmt = 3;    // Back to '/* ...' pattern
-                _split = split(lex,letter);
-                if(_split == 1){
-                    if(lex->offset == 0){
-                        lex->line_number++;
-                    }
-                }
-                else{
-                    lex->offset++;
-                }
-            }
-        }   
-        else{                       //Not in pre_comment or comment pattern
-            if(getted == 0){        //Didn't get out of blank yet
-                _split = split(lex,letter);
-                if(_split == 1){    //Still in blank
-                    if(lex->offset == 0)    lex->line_number++;
-                }
-                else{               // Into token or comment
-                    lex->start = lex->offset;
-                    lex->offset++;
-                    getted = 1;
-                    lex->token[lex->iter] = letter;
-                    lex->iter++;
-                    if(letter == '/'){
-                        cmt = 1;    // Get a '/' the first time
-                    }
-                }
-            }
-            else{                   //In token 
-                lex->end = lex->offset - 1;     //In order to get right offset before function   
-                _split = split(lex,letter);     //split() may change lex->offset.
-                if(_split == 1){
-                    lex->token[iter] = 0;
-                    lex->iter = 0;
+            case 2:{
+                sym2 = (char)fgetc(fin);
+                if(sym2==EOF){
+                    lex->token[0] = sym1;
+                    lex->token[1] = '\0';
+                    lex->end = lex->offset;
                     return 1;
                 }
                 else{
-                    if(lex->iter < MAX_TOKEN_LEN){
-                        lex->offset++;
-                        lex->token[lex->iter] = letter;
-                        lex->iter++;
-                    }
+                    lex->offset ++;
+                    if(is_symbol(sym2)!=-1){
+                        state = 3;
+                        continue;
+                    } 
                     else{
-                        // Too long, don't know how to handle?
+                        fseek(fin, -1, SEEK_CUR);
+                        lex->offset --;
+                        lex->end = lex->offset;
+                        lex->token[0] = sym1;
+                        lex->token[1] = '\0';
+                        return 1;
                     }
                 }
+                break;
+            }
+            case 3:{
+                char tmp[3];
+                tmp[0] = sym1;
+                tmp[1] = sym2;
+                tmp[2] = '\0';
+                if(is_symbol(tmp)!=-1){
+                    lex->token[0] = sym1;
+                    lex->token[1] = sym2;
+                    lex->token[2] = '\0';
+                    return 1;
+                }
+                else{
+                    fseek(fin,-1,SEEK_CUR);
+                    lex->offset --;
+                    lex->token[0] = sym1;
+                    lex->token[1] = '\0';
+                    lex->end = lex->offset;
+                    return 1;
+                }
+                break;
+            }
+            case 4:{
+                letter = fgetc(fin);
+                if(letter == '\n'){
+                    state = 0;
+                    lex->line_number++;
+                    lex->offset = 0;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                break;
+            }
+            case 5:{
+                letter = fgect(fin);
+                if(letter == '*'){
+                    state = 6;
+                    lex->offset++;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                else{
+                    if(!Is_split(lex,letter)){
+                        lex->offset++;
+                    }
+                }
+                break;
+            }
+            case 6:{
+                letter = fgec(fin);
+                if(letter == '/'){
+                    state = 0;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                else{
+                    if(!Is_split(lex,letter)){
+                        lex->offset++;
+                    }
+                }
+                break;
             }
         }
-        letter = fgec(fin);
-    } 
-    if(cmt == 1 || (cmt ==0 && getted == 1)){    // If token (include '/') ends with EOF
-        lex->end = lex->offset - 1;
-        lex->token[iter] = 0;
-        lex->iter = 0;
-        lex->offset = 0;
-        return 1;
     }
-    return 0;   // Others: Comment or blank ends with EOF
 }
 
 
-void analysis(const char * word){
-
-=======
 void analysis(const char * word, PL0Lex * lex){
     int test = is_reservedword(word);
     if(test!=-1){
@@ -216,7 +229,6 @@ void analysis(const char * word, PL0Lex * lex){
     else{
         lex->last_token_type = TOKEN_NULL;
     }
->>>>>>> 84d0613cf0efd40898002b2f6ca4ca3a98747227
 }
 
 int is_reservedword(const char * word){  //return the index of the reserved word table or -1(not find)
