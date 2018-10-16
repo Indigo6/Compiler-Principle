@@ -34,15 +34,23 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
 }
 BOOL get_token(PL0Lex * lex){
     unsigned int state = 0;
-    switch (state){
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
+    char letter;
+    while(1) {
+        letter = fgetc(fin);
+        if (letter == EOF) {
+            return 0;
+        } else {
+            switch (state) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+            }
+        }
     }
 }
 BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
