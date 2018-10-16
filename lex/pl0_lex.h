@@ -70,7 +70,12 @@ typedef struct _tPL0Lex {
 
 PL0Lex * PL0Lex_create(struct _tPL0Compiler * parent);
 BOOL PL0Lex_destroy(PL0Lex * lex);
-
 BOOL PL0Lex_get_token(PL0Lex * lex);
+void analysis(const char * word, PL0Lex * lex);
+int is_reservedword(const char * word);
+int is_symbol(const char * word);
+BOOL is_id(const char* word);
+BOOL is_num(const char * word);
+
 
 #endif /* pl0_lex.h */
