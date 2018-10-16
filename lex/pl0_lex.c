@@ -32,66 +32,10 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     lex->start = 0;lex->end = 0;
     _get_token = get_token(lex);
 }
-BOOL get_token(PL0Lex * lex){
-    unsigned int state = 0;
-    char letter1,letter2;
-    while(1) {
-            switch (state) {
-                case 0:
-                case 1:
-                case 2:{
-                    letter2 = (char)fgetc(fin);
-                    if(letter2==EOF){
-                        lex->token[0] = letter1;
-                        lex->token[1] = '\0';
-                        lex -> start = lex -> offset;
-                        lex -> end = lex->offset;
-                        return TRUE;
-                    }
-                    else{
-                        lex->offset ++;
-                    if(is_symbol(letter2)!=-1){
-                        state = 3;
-                        continue;
-                    } else{
-                        fseek(fin, -1, SEEK_CUR);
-                        lex -> offset --;
-                        lex -> end = lex->offset;
-                        lex -> token[0] = letter1;
-                        lex -> token[1] = '\0';
-                        return TRUE;
-                    }
-                    }
-                }
-                case 3:{
-                    char tmp[3];
-                    tmp[0] = letter1;
-                    tmp[1] = letter2;
-                    tmp[2] = '\0';
-                    if(is_symbol(tmp)!=-1){
-                        lex -> token[0] = letter1;
-                        lex -> token[1] = letter2;
-                        lex -> token[2] = '\0';
-                        lex -> end = lex -> offset;
-                        return TRUE;
-                    }
-                    else{
-                        fseek(fin,-1,SEEK_CUR);
-                        lex -> offset --;
-                        lex -> token[0] = letter1;
-                        lex -> token[1] = '\0';
-                        lex -> end = lex->offset;
-                        return TRUE;
-                    }
-                }
-                case 4:
-                case 5:
-                case 6:
-            }
-        break;
-    }
-}
-BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
+
+
+
+BOOL Is_split(PL0Lex *lex, char letter){      // cognize if letter is one of ' ','\t', '\n',
     if(letter == '\t'){
         lex->offset += 4;   
     }
@@ -100,10 +44,160 @@ BOOL split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t
     }
     else if(letter == '\n'){
         lex->offset = 0;
+        lex->line_number++;
     }
     else return 0;
     return 1;
 }   //我想把分隔符的offset和linenumber管理放一起
+
+BOOL get_token(PL0Lex * lex){
+    char letter;
+    int state = 0;
+    char sym1,sym2;
+    int iter = 0;
+    
+    while(1){
+        switch(state){
+            case 0:{
+		    	letter = fgetc(fin);
+        	    if(letter == EOF){
+                    return 0;
+                }
+		    	else if(isalnum(letter) || letter == '_'){//token
+		    		state = 1;//跳转到状态s1
+                    lex->start = lex->offset++;
+                    lex->token[iter++] = letter;
+                }
+                else if(Is_split(lex,letter));
+                else{
+                    state = 2;
+                    lex->start = lex->offset++;
+                    sym1 = letter;
+                }
+                break;
+            }
+            case 1:{
+                letter = fgetc(fin);
+                if(letter == EOF) return 0;
+                if(isalnum(letter) || letter=='_'){//token
+                    state = 1;//跳转到状态s1
+                    lex->offset++;//行内位置++
+                    if(lex->iter > MAX_TOKEN_LEN){//长度超标
+                        lex->token[0]='\0';//暂存数组首位置空
+                        lex->iter = 0;//暂存数组指针指向首位
+                        while(1){
+                            letter = fgetc(fin);
+                            if(isalnum(letter) || letter=='_'){//跳过之后的一串token
+                                lex->offset++;
+                                continue;	
+                            }
+                            fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
+                            return 0;
+                        }
+                    }
+                    lex->token[iter] = letter;//存入暂存数组
+                    lex->iter++;//暂存数组的指针++
+                    break;//继续该状态循环读入token
+                }
+                else{//symbol或分隔符
+                    lex->end = lex->offset;
+                    fseek(fin,-1,SEEK_CUR);//回退
+                    return 1;
+                }
+                break;
+            }
+            case 2:{
+                sym2 = (char)fgetc(fin);
+                if(sym2==EOF){
+                    lex->token[0] = sym1;
+                    lex->token[1] = '\0';
+                    lex->end = lex->offset;
+                    return 1;
+                }
+                else{
+                    lex->offset ++;
+                    if(is_symbol(sym2)!=-1){
+                        state = 3;
+                        continue;
+                    } 
+                    else{
+                        fseek(fin, -1, SEEK_CUR);
+                        lex->offset --;
+                        lex->end = lex->offset;
+                        lex->token[0] = sym1;
+                        lex->token[1] = '\0';
+                        return 1;
+                    }
+                }
+                break;
+            }
+            case 3:{
+                char tmp[3];
+                tmp[0] = sym1;
+                tmp[1] = sym2;
+                tmp[2] = '\0';
+                if(is_symbol(tmp)!=-1){
+                    lex->token[0] = sym1;
+                    lex->token[1] = sym2;
+                    lex->token[2] = '\0';
+                    return 1;
+                }
+                else{
+                    fseek(fin,-1,SEEK_CUR);
+                    lex->offset --;
+                    lex->token[0] = sym1;
+                    lex->token[1] = '\0';
+                    lex->end = lex->offset;
+                    return 1;
+                }
+                break;
+            }
+            case 4:{
+                letter = fgetc(fin);
+                if(letter == '\n'){
+                    state = 0;
+                    lex->line_number++;
+                    lex->offset = 0;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                break;
+            }
+            case 5:{
+                letter = fgect(fin);
+                if(letter == '*'){
+                    state = 6;
+                    lex->offset++;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                else{
+                    if(!Is_split(lex,letter)){
+                        lex->offset++;
+                    }
+                }
+                break;
+            }
+            case 6:{
+                letter = fgec(fin);
+                if(letter == '/'){
+                    state = 0;
+                }
+                else if(letter == EOF){
+                    return 0;
+                }
+                else{
+                    if(!Is_split(lex,letter)){
+                        lex->offset++;
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
 
 
 void analysis(const char * word, PL0Lex * lex){
