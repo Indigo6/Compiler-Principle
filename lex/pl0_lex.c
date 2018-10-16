@@ -33,7 +33,8 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     _get_token = get_token(lex);
 }
 
-BOOL Is_split(PL0Lex *lex, char letter){     // cognize if letter is one of ' ','\t', '\n',
+
+BOOL Is_split(PL0Lex *lex, char letter){      // cognize if letter is one of ' ','\t', '\n',
     if(letter == '\t'){
         lex->offset += 4;   
     }

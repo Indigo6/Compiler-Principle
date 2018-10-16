@@ -70,6 +70,7 @@ typedef struct _tPL0Lex {
 
 PL0Lex * PL0Lex_create(struct _tPL0Compiler * parent);
 BOOL PL0Lex_destroy(PL0Lex * lex);
+BOOL get_token(PL0Lex * lex);
 BOOL PL0Lex_get_token(PL0Lex * lex);
 void analysis(const char * word, PL0Lex * lex);
 int is_reservedword(const char * word);
