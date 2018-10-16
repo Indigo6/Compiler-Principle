@@ -77,25 +77,25 @@ BOOL get_token(PL0Lex * lex){
             }
             case 1:{
                 letter = fgetc(fin);
-                if(letter == EOF) return 0;
                 if(isalnum(letter) || letter=='_'){//token
                     state = 1;//跳转到状态s1
                     lex->offset++;//行内位置++
-                    if(lex->iter > MAX_TOKEN_LEN){//长度超标
+                    if(iter > MAX_TOKEN_LEN){//长度超标
                         lex->token[0]='\0';//暂存数组首位置空
-                        lex->iter = 0;//暂存数组指针指向首位
+                        iter = 0;//暂存数组指针指向首位
                         while(1){
                             letter = fgetc(fin);
                             if(isalnum(letter) || letter=='_'){//跳过之后的一串token
                                 lex->offset++;
                                 continue;	
                             }
+                            if(letter == EOF) return 0;
                             fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
                             return 0;
                         }
                     }
                     lex->token[iter] = letter;//存入暂存数组
-                    lex->iter++;//暂存数组的指针++
+                    iter++;//暂存数组的指针++
                     break;//继续该状态循环读入token
                 }
                 else{//symbol或分隔符
