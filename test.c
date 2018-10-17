@@ -35,24 +35,28 @@ int main(int argc, char * argv[])
 	PL0Lex * lex = compiler->lex;
 	while (PL0Lex_get_token(lex))
 	{
-		assert(lex->last_token_type != TOKEN_NULL);
+		//assert(lex->last_token_type != TOKEN_NULL);
 		assert(lex->last_token_type != TOKEN_RESWORDS);
 		assert(lex->last_token_type != TOKEN_SYMBOL);
-		if (lex->last_token_type == TOKEN_IDENTIFIER)
+		if (lex->last_token_type == TOKEN_NULL)
 		{
-			printf("Identifier: %s\n", lex->last_id);
+			printf("error in line %d, %d-%d\n",lex->line_number,lex->start,lex->end);
+		}
+		else if (lex->last_token_type == TOKEN_IDENTIFIER)
+		{
+			printf("Identifier:    %-10s %d:%d-%d\n",lex->last_id,lex->line_number,lex->start,lex->end);
 		}
 		else if (lex->last_token_type == TOKEN_NUMBER)
 		{
-			printf("Number: %d\n", lex->last_num);
+			printf("Number:        %-10d %d:%d-%d\n",lex->last_num,lex->line_number,lex->start,lex->end);
 		}
 		else if (lex->last_token_type > TOKEN_RESWORDS)
 		{
-			printf("Reserved word: %s\n", TOKEN_RESERVED_WORDS[lex->last_token_type - TOKEN_RESWORDS - 1]);
+			printf("Reserved word: %-10s %d:%d-%d\n",TOKEN_RESERVED_WORDS[lex->last_token_type - TOKEN_RESWORDS - 1],lex->line_number,lex->start,lex->end);
 		}
 		else
 		{
-			printf("Symbol: %s\n", TOKEN_SYMBOLS[lex->last_token_type - TOKEN_SYMBOL - 1]);
+			printf("Symbol:        %-10s %d:%d-%d\n",TOKEN_SYMBOLS[lex->last_token_type - TOKEN_SYMBOL - 1],lex->line_number,lex->start,lex->end);
 		}
 	}
 
