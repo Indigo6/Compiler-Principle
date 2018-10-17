@@ -12,4 +12,3 @@ begin
   call p;
   call q;
 end.
-
