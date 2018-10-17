@@ -33,9 +33,15 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
     BOOL _get_token;            //Signal for result of getting token, 0 for failure, 1 for success
     lex->start = 0;lex->end = 0;
     lex->overlong = 0;
+    lex->cmmt_error = 0;
     _get_token = get_token(lex);
     if(!_get_token){
         if(lex->overlong){
+            lex->last_token_type = TOKEN_NULL;
+            return TRUE;
+        }
+        else if(lex->cmmt_error){
+            printf("//The following error comes from unpaired /* or */.\n");
             lex->last_token_type = TOKEN_NULL;
             return TRUE;
         }
@@ -130,7 +136,7 @@ BOOL get_token(PL0Lex * lex){
                     if(letter == EOF)  lex->isEOF = TRUE;
                     lex->end = lex->offset - 1;// 回退
                     lex->token[iter] = '\0';
-                    fseek(fin,-1,SEEK_CUR);//回退
+                    if(letter != EOF)   fseek(fin,-1,SEEK_CUR);//EOF no 回退
                     //printf("Return from s1.\n");
                     return 1;
                 }
@@ -176,7 +182,15 @@ BOOL get_token(PL0Lex * lex){
                     state = 4;
                 }
                 else if(sym[0]=='/' && sym[1] == '*'){
+                    lex->start = lex->offset - 2;
+                    lex->end = lex->offset - 1;
                     state =5;
+                }
+                else if(sym[0]=='*' && sym[1] == '/'){
+                    lex->start = lex->offset - 2;
+                    lex->end = lex->offset - 1;
+                    lex->cmmt_error = TRUE;
+                    return 0;
                 }
                 else{
                     fseek(fin,-1,SEEK_CUR);
@@ -211,6 +225,7 @@ BOOL get_token(PL0Lex * lex){
                 }
                 else if(letter == EOF){
                     lex -> isEOF = TRUE;
+                    lex->cmmt_error = TRUE;
                     return 0;
                 }
                 else{
@@ -230,6 +245,7 @@ BOOL get_token(PL0Lex * lex){
                 }
                 else if(letter == EOF){
                     lex -> isEOF = TRUE;
+                    lex->cmmt_error = TRUE;
                     return 0;
                 }
                 else{
