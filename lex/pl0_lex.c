@@ -41,7 +41,7 @@ BOOL PL0Lex_get_token(PL0Lex * lex)
             return TRUE;
         }
         else if(lex->cmmt_error){
-            printf("//The following error comes from unpaired /* or */.\n");
+            printf("//The following error comes from unpaired '/*'.\n");
             lex->last_token_type = TOKEN_NULL;
             return TRUE;
         }
@@ -80,22 +80,22 @@ BOOL get_token(PL0Lex * lex){
     
     while(1){
         switch(state){
-            case 0:{
+            case 0:{    //Start state
 		    	letter = fgetc(fin);
-        	    if(letter == EOF){
+        	    if(letter == EOF){  //Begin with EOF, then fail
         	        lex->isEOF = TRUE;
                     return 0;
                 }
-		    	else if(isalnum(letter) || letter == '_'){//token
+		    	else if(isalnum(letter) || letter == '_'){  //Begin with token
 		    		state = 1;//跳转到状态s1
                     lex->start = lex->offset++;
                     lex->token[iter++] = letter;
                 }
-                else if(Is_split(lex,letter)){
+                else if(Is_split(lex,letter)){  //Begin with split(need to be filtered)
                     //printf("State 0 find split:%c,still state0.\n",letter);
                     continue;
                 }
-                else{
+                else{   //Begin with symbol
                     //printf("s0->s2, letter=%d???\n",letter);
                     state = 2;
                     lex->start = lex->offset++;
@@ -144,7 +144,7 @@ BOOL get_token(PL0Lex * lex){
             }
             case 2:{
                 sym[1] = (char)fgetc(fin);
-                if(sym[1]==EOF){
+                if(sym[1]==EOF){    //One symbol end with EOF
                     lex->token[0] = sym[0];
                     lex->token[1] = '\0';
                     lex->end = lex->offset - 1;
@@ -154,11 +154,11 @@ BOOL get_token(PL0Lex * lex){
                 }
                 else{
                     lex->offset ++;
-                    if(is_symbol(sym+1)!=-1){
+                    if(is_symbol(sym+1)!=-1){   //Two symbols, need to follow longest-pattern-rule
                         state = 3;
                         continue;
                     } 
-                    else{
+                    else{   //One symbol, end with other character
                         fseek(fin, -1, SEEK_CUR);
                         lex->offset --;
                         lex->end = lex->offset - 1;
@@ -171,28 +171,22 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 3:{
-                if(is_symbol(sym)!=-1){
+                if(is_symbol(sym)!=-1){ //Check if len-two-symbol is valid
                     lex->token[0] = sym[0];
                     lex->token[1] = sym[1];
                     lex->token[2] = '\0';
                     //printf("Return from s3-> one symbol.\n");
                     return 1;
                 }
-                else if(sym[0]=='/' && sym[1]=='/'){
+                else if(sym[0]=='/' && sym[1]=='/'){    //Comment type 1
                     state = 4;
                 }
-                else if(sym[0]=='/' && sym[1] == '*'){
+                else if(sym[0]=='/' && sym[1] == '*'){  //Comment type 2
                     lex->start = lex->offset - 2;
                     lex->end = lex->offset - 1;
                     state =5;
                 }
-                else if(sym[0]=='*' && sym[1] == '/'){
-                    lex->start = lex->offset - 2;
-                    lex->end = lex->offset - 1;
-                    lex->cmmt_error = TRUE;
-                    return 0;
-                }
-                else{
+                else{   // len-two-symbol is invalid, then symbol len 1
                     fseek(fin,-1,SEEK_CUR);
                     lex->offset --;
                     lex->token[0] = sym[0];
@@ -203,7 +197,7 @@ BOOL get_token(PL0Lex * lex){
                 }
                 break;
             }
-            case 4:{
+            case 4:{    //Comment '//' type
                 letter = fgetc(fin);
                 if(letter == '\n'){
                     state = 0;
@@ -216,20 +210,20 @@ BOOL get_token(PL0Lex * lex){
                 }
                 break;
             }
-            case 5:{
+            case 5:{    //Comment '/*' type
                 letter = fgetc(fin);
-                if(letter == '*'){
+                if(letter == '*'){  //Hope to meet '*/'
                     state = 6;
                     lex->offset++;
                     continue;
                 }
-                else if(letter == EOF){
+                else if(letter == EOF){ //Comment character '/*' unpaired
                     lex -> isEOF = TRUE;
                     lex->cmmt_error = TRUE;
                     return 0;
                 }
                 else{
-                    if(!Is_split(lex,letter)){
+                    if(!Is_split(lex,letter)){  //Still in comment
                         lex->offset++;
                     }
                     continue;
@@ -238,18 +232,18 @@ BOOL get_token(PL0Lex * lex){
             }
             case 6:{
                 letter = fgetc(fin);
-                if(letter == '/'){
+                if(letter == '/'){  //Meet with '*/', then return to start to find next token
                     state = 0;
                     lex->offset++;
                     continue;
                 }
-                else if(letter == EOF){
+                else if(letter == EOF){ //Comment character '/*' unpaired
                     lex -> isEOF = TRUE;
                     lex->cmmt_error = TRUE;
                     return 0;
                 }
                 else{
-                    state = 5;
+                    state = 5;  //Hope of endding comment failed :(
                     if(!Is_split(lex,letter)){
                         lex->offset++;
                     }
