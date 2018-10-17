@@ -82,6 +82,9 @@ BOOL get_token(PL0Lex * lex){
         switch(state){
             case 0:{    //Start state
 		    	letter = fgetc(fin);
+		    	if(letter == ':'){
+		    	    int debug = TRUE;
+		    	}
         	    if(letter == EOF){  //Begin with EOF, then fail
         	        lex->isEOF = TRUE;
                     return 0;
@@ -175,6 +178,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[0] = sym[0];
                     lex->token[1] = sym[1];
                     lex->token[2] = '\0';
+                    lex->end = lex->offset - 1;
                     //printf("Return from s3-> one symbol.\n");
                     return 1;
                 }
@@ -329,26 +333,22 @@ BOOL is_id(const char* word){
 }
 
 BOOL is_num(const char * word){
-    BOOL neg_flag = FALSE;
-    int range = 9;
-    if(word[0] == '-') neg_flag = TRUE;//判断是不是负数
-    if(neg_flag && word[1] == '\0') return FALSE;
-    if(!neg_flag){//正数情况
-      if(word[0]== 0) range = 10;
-      for(int i = 0; word[i]!='\0';i++){
-	if(i == range) return FALSE;//超出range，false
-        if(word[i]<'0' || word[i]>'9') return FALSE;//全为数字，否则false
-      }
-      return TRUE;//通过考验，true
+    unsigned int i = 0;
+    char c = word[i];
+    while(c != '\0'){
+        if(!(c>='0' && c<='9')){
+            return FALSE;
+        }
+        else{
+            i ++ ;
+            c = word[i];
+        }
     }
-    else{//负数情况，同上
-      if(word[1] == 0) range = 11;
-      else range = 10; 
-      for(int i = 1; word[i]!='\0';i++){
-	if(i == range) return FALSE;
-        if(word[i]<'0' || word[i]>'9') return FALSE;
-      }
-      return TRUE;
+    if (i>=MAX_NUM_LEN){
+        return FALSE;
+    }
+    else{
+        return TRUE;
     }
 }
 
