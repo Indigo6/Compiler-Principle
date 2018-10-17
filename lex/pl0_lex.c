@@ -68,8 +68,9 @@ BOOL Is_split(PL0Lex *lex, char letter){      // cognize if letter is one of ' '
 BOOL get_token(PL0Lex * lex){
     char letter;
     int state = 0;
-    char sym1,sym2;
+    char sym[3];
     int iter = 0;
+    sym[2] = '\0';
     
     while(1){
         switch(state){
@@ -84,11 +85,12 @@ BOOL get_token(PL0Lex * lex){
                     lex->start = lex->offset++;
                     lex->token[iter++] = letter;
                 }
-                else if(Is_split(lex,letter));
+                else if(Is_split(lex,letter))
+                    continue;
                 else{
                     state = 2;
                     lex->start = lex->offset++;
-                    sym1 = letter;
+                    sym[0] = letter;
                 }
                 break;
             }
@@ -123,8 +125,7 @@ BOOL get_token(PL0Lex * lex){
                 }
                 else{//symbol或分隔符
                     if(letter == EOF)  lex->isEOF = TRUE;
-                    lex->end = lex->offset;
-                    lex->offset++;
+                    lex->end = lex->offset - 1;// 回退
                     lex->token[iter] = '\0';
                     fseek(fin,-1,SEEK_CUR);//回退
                     return 1;
@@ -132,25 +133,25 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 2:{
-                sym2 = (char)fgetc(fin);
-                if(sym2==EOF){
-                    lex->token[0] = sym1;
+                sym[1] = (char)fgetc(fin);
+                if(sym[1]==EOF){
+                    lex->token[0] = sym[0];
                     lex->token[1] = '\0';
-                    lex->end = lex->offset;
-                    lex -> isEOF = TRUE;
+                    lex->end = lex->offset - 1;
+                    lex->isEOF = TRUE;
                     return 1;
                 }
                 else{
                     lex->offset ++;
-                    if(is_symbol(sym2)!=-1){
+                    if(is_symbol(sym+1)!=-1){
                         state = 3;
                         continue;
                     } 
                     else{
                         fseek(fin, -1, SEEK_CUR);
                         lex->offset --;
-                        lex->end = lex->offset;
-                        lex->token[0] = sym1;
+                        lex->end = lex->offset - 1;
+                        lex->token[0] = sym[0];
                         lex->token[1] = '\0';
                         return 1;
                     }
@@ -158,28 +159,24 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 3:{
-                char tmp[3];
-                tmp[0] = sym1;
-                tmp[1] = sym2;
-                tmp[2] = '\0';
-                if(is_symbol(tmp)!=-1){
-                    lex->token[0] = sym1;
-                    lex->token[1] = sym2;
+                if(is_symbol(sym)!=-1){
+                    lex->token[0] = sym[0];
+                    lex->token[1] = sym[1];
                     lex->token[2] = '\0';
                     return 1;
                 }
-                else if(sym1=='/' && sym2=='/'){
+                else if(sym[0]=='/' && sym[1]=='/'){
                     state = 4;
                 }
-                else if(sym1=='/' && sym2 == '*'){
+                else if(sym[0]=='/' && sym[1] == '*'){
                     state =5;
                 }
                 else{
                     fseek(fin,-1,SEEK_CUR);
                     lex->offset --;
-                    lex->token[0] = sym1;
+                    lex->token[0] = sym[0];
                     lex->token[1] = '\0';
-                    lex->end = lex->offset;
+                    lex->end = lex->offset - 1;
                     return 1;
                 }
                 break;
@@ -202,6 +199,7 @@ BOOL get_token(PL0Lex * lex){
                 if(letter == '*'){
                     state = 6;
                     lex->offset++;
+                    continue;
                 }
                 else if(letter == EOF){
                     lex -> isEOF = TRUE;
@@ -211,6 +209,7 @@ BOOL get_token(PL0Lex * lex){
                     if(!Is_split(lex,letter)){
                         lex->offset++;
                     }
+                    continue;
                 }
                 break;
             }
@@ -218,15 +217,19 @@ BOOL get_token(PL0Lex * lex){
                 letter = fgetc(fin);
                 if(letter == '/'){
                     state = 0;
+                    lex->offset++;
+                    continue;
                 }
                 else if(letter == EOF){
                     lex -> isEOF = TRUE;
                     return 0;
                 }
                 else{
+                    state = 5;
                     if(!Is_split(lex,letter)){
                         lex->offset++;
                     }
+                    continue;
                 }
                 break;
             }
