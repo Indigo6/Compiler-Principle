@@ -50,11 +50,12 @@ extern const char * TOKEN_SYMBOLS[NSYM];
 typedef struct _tPL0Lex {
 	/* Parent return pointer */
 	struct _tPL0Compiler * compiler;
-	
 	/* For output */
 	PL0TokenType last_token_type;
 	char last_id[MAX_ID_LEN + 1];
 	int last_num;
+
+	int last_level;
 
 	/** --------------------------
 	 * TODO: Your variables here

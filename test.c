@@ -26,7 +26,7 @@ int main(int argc, char * argv[])
 
 	/* Start */
 	printf("=== This is the program for PL/0 testing ===\n");
-	
+
 	/* Setup */
 	compiler = PL0Compiler_create();
 
@@ -57,6 +57,10 @@ int main(int argc, char * argv[])
 	}
 
 	printf("--- Lexical Analysis testing end. ---\n");
+
+	/*test syntax ayalysis*/
+	PL0Lex_get_token(lex);
+	program_block(lex);
 
 	/* Cleanup */
 	fclose(fin);
