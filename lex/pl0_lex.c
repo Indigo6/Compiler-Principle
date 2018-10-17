@@ -85,9 +85,12 @@ BOOL get_token(PL0Lex * lex){
                     lex->start = lex->offset++;
                     lex->token[iter++] = letter;
                 }
-                else if(Is_split(lex,letter))
+                else if(Is_split(lex,letter)){
+                    //printf("State 0 find split:%c,still state0.\n",letter);
                     continue;
+                }
                 else{
+                    //printf("s0->s2, letter=%d???\n",letter);
                     state = 2;
                     lex->start = lex->offset++;
                     sym[0] = letter;
@@ -128,6 +131,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->end = lex->offset - 1;// 回退
                     lex->token[iter] = '\0';
                     fseek(fin,-1,SEEK_CUR);//回退
+                    //printf("Return from s1.\n");
                     return 1;
                 }
                 break;
@@ -139,6 +143,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[1] = '\0';
                     lex->end = lex->offset - 1;
                     lex->isEOF = TRUE;
+                    //printf("Return from s2->EOF.\n");
                     return 1;
                 }
                 else{
@@ -153,6 +158,7 @@ BOOL get_token(PL0Lex * lex){
                         lex->end = lex->offset - 1;
                         lex->token[0] = sym[0];
                         lex->token[1] = '\0';
+                        //printf("Return from s2->valid symbol.\n");
                         return 1;
                     }
                 }
@@ -163,6 +169,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[0] = sym[0];
                     lex->token[1] = sym[1];
                     lex->token[2] = '\0';
+                    //printf("Return from s3-> one symbol.\n");
                     return 1;
                 }
                 else if(sym[0]=='/' && sym[1]=='/'){
@@ -177,6 +184,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[0] = sym[0];
                     lex->token[1] = '\0';
                     lex->end = lex->offset - 1;
+                    //printf("Return from s3->two symbol.\n");
                     return 1;
                 }
                 break;
