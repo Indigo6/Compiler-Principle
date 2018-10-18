@@ -81,13 +81,10 @@ BOOL get_token(PL0Lex * lex){
     while(1){
         switch(state){
             case 0:{    //Start state
-		    	letter = fgetc(fin);
-		    	if(letter == ':'){
-		    	    int debug = TRUE;
-		    	}
+		    	letter = (char)fgetc(fin);
         	    if(letter == EOF){  //Begin with EOF, then fail
         	        lex->isEOF = TRUE;
-                    return 0;
+                    return FALSE;
                 }
 		    	else if(isalnum(letter) || letter == '_'){  //Begin with token
 		    		state = 1;//跳转到状态s1
@@ -107,7 +104,7 @@ BOOL get_token(PL0Lex * lex){
                 break;
             }
             case 1:{
-                letter = fgetc(fin);
+                letter = (char)fgetc(fin);
                 if(isalnum(letter) || letter=='_'){//token
                     state = 1;//跳转到状态s1
                     lex->offset++;//行内位置++
@@ -116,18 +113,18 @@ BOOL get_token(PL0Lex * lex){
                         lex->token[0]='\0';//暂存数组首位置空
                         iter = 0;//暂存数组指针指向首位
                         while(1){
-                            letter = fgetc(fin);
+                            letter = (char)fgetc(fin);
                             if(isalnum(letter) || letter=='_'){//跳过之后的一串token
                                 lex->offset++;
                                 continue;	
                             }
                             else if(letter == EOF){
                                 lex->isEOF = 1;
-                                return 0;
+                                return FALSE;
                             }
                             else{
                                 fseek(fin,-1,SEEK_CUR);//读至分隔符或符号，回退一位
-                                return 0;
+                                return FALSE;
                             }
                         }
                     }
@@ -141,9 +138,8 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[iter] = '\0';
                     if(letter != EOF)   fseek(fin,-1,SEEK_CUR);//EOF no 回退
                     //printf("Return from s1.\n");
-                    return 1;
+                    return TRUE;
                 }
-                break;
             }
             case 2:{
                 sym[1] = (char)fgetc(fin);
@@ -153,7 +149,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->end = lex->offset - 1;
                     lex->isEOF = TRUE;
                     //printf("Return from s2->EOF.\n");
-                    return 1;
+                    return TRUE;
                 }
                 else{
                     lex->offset ++;
@@ -168,10 +164,9 @@ BOOL get_token(PL0Lex * lex){
                         lex->token[0] = sym[0];
                         lex->token[1] = '\0';
                         //printf("Return from s2->valid symbol.\n");
-                        return 1;
+                        return TRUE;
                     }
                 }
-                break;
             }
             case 3:{
                 if(is_symbol(sym)!=-1){ //Check if len-two-symbol is valid
@@ -180,7 +175,7 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[2] = '\0';
                     lex->end = lex->offset - 1;
                     //printf("Return from s3-> one symbol.\n");
-                    return 1;
+                    return TRUE;
                 }
                 else if(sym[0]=='/' && sym[1]=='/'){    //Comment type 1
                     state = 4;
@@ -197,12 +192,12 @@ BOOL get_token(PL0Lex * lex){
                     lex->token[1] = '\0';
                     lex->end = lex->offset - 1;
                     //printf("Return from s3->two symbol.\n");
-                    return 1;
+                    return TRUE;
                 }
                 break;
             }
             case 4:{    //Comment '//' type
-                letter = fgetc(fin);
+                letter = (char)fgetc(fin);
                 if(letter == '\n'){
                     state = 0;
                     lex->line_number++;
@@ -210,12 +205,12 @@ BOOL get_token(PL0Lex * lex){
                 }
                 else if(letter == EOF){
                     lex -> isEOF = TRUE;
-                    return 0;
+                    return FALSE;
                 }
                 break;
             }
             case 5:{    //Comment '/*' type
-                letter = fgetc(fin);
+                letter = (char)fgetc(fin);
                 if(letter == '*'){  //Hope to meet '*/'
                     state = 6;
                     lex->offset++;
@@ -224,7 +219,7 @@ BOOL get_token(PL0Lex * lex){
                 else if(letter == EOF){ //Comment character '/*' unpaired
                     lex -> isEOF = TRUE;
                     lex->cmmt_error = TRUE;
-                    return 0;
+                    return FALSE;
                 }
                 else{
                     if(!Is_split(lex,letter)){  //Still in comment
@@ -232,10 +227,9 @@ BOOL get_token(PL0Lex * lex){
                     }
                     continue;
                 }
-                break;
             }
             case 6:{
-                letter = fgetc(fin);
+                letter = (char)fgetc(fin);
                 if(letter == '/'){  //Meet with '*/', then return to start to find next token
                     state = 0;
                     lex->offset++;
@@ -244,7 +238,7 @@ BOOL get_token(PL0Lex * lex){
                 else if(letter == EOF){ //Comment character '/*' unpaired
                     lex -> isEOF = TRUE;
                     lex->cmmt_error = TRUE;
-                    return 0;
+                    return FALSE;
                 }
                 else{
                     state = 5;  //Hope of endding comment failed :(
@@ -253,7 +247,6 @@ BOOL get_token(PL0Lex * lex){
                     }
                     continue;
                 }
-                break;
             }
         }
     }
