@@ -1,0 +1,9 @@
+/home/indigo/cpl/pl0compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/CMakeFiles/test.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/lex/CMakeFiles/rebuild_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/lex/CMakeFiles/edit_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/lex/CMakeFiles/lex.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/common/CMakeFiles/rebuild_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/common/CMakeFiles/edit_cache.dir
+/home/indigo/cpl/pl0compiler/cmake-build-debug/common/CMakeFiles/common.dir
