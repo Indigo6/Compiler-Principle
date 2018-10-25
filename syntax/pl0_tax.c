@@ -85,15 +85,37 @@ void const_declaration(PL0Lex * lex) {
 	}
 } //const_declaration
 
+void varible_declaration(PL0Lex * lex){
+    if(lex->last_token_type == TOKEN_IDENTIFIER){
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_BECOMES){
+            if(lex->last_token_type == TOKEN_BECOMES){
+                printf("found ':=' when expecting '='\n");
+            }
+            PL0Lex_get_token(lex);
+            if (lex->last_token_type == TOKEN_NUMBER) {
+                table_append(lex, ID_VARIABLE);
+                PL0Lex_get_token(lex);
+            } else {
+                printf("there must be a number to follow '='\n");
+            }
+        } else{
+            printf("there must be an '=' to follow the identifier\n");
+        }
+    }
+    else{
+        printf("There must be an identifier to follow 'var'\n");
+    }
+}
+
 void program_block(PL0Lex * lex) {
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
-	do {
+	do{
 		if (lex->last_token_type == TOKEN_CONST) {
 			PL0Lex_get_token(lex);
-			do {
-				const_declaration(lex);
+			const_declaration(lex);
 				while (lex->last_token_type == TOKEN_COMMA) {
 					PL0Lex_get_token(lex);
 					const_declaration(lex);
@@ -104,8 +126,6 @@ void program_block(PL0Lex * lex) {
 				else {
 					printf("missing ',' or ';'\n");
 				}
-			} while (lex->last_token_type == TOKEN_IDENTIFIER);
-		}
-		else if(lex->last_token_type == TOKEN_VAR){}
+			}
 	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
