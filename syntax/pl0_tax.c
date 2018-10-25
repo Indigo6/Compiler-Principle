@@ -3,6 +3,7 @@
 #include "../common/common.h"
 #include "../lex/pl0_lex.h"
 #include "pl0_tax.h"
+#include <string.h>
 
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
