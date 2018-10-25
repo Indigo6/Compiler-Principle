@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../common/common.h"
-#include "../lex/pl0_lex.h"
 #include "pl0_tax.h"
+#include <string.h>
 
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
@@ -92,5 +92,5 @@ void program_block(PL0Lex * lex) {
 				}
 			} while (lex->last_token_type == TOKEN_IDENTIFIER);
 		}
-	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE || lex->last_token_type == TOKEN_NULL);
+	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
