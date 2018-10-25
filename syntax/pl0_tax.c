@@ -113,5 +113,13 @@ void program_block(PL0Lex * lex) {
 					printf("missing ',' or ';'\n");
 				}
 			}
+			else if(lex->last_token_type == TOKEN_VAR){
+			    PL0Lex_get_token(lex);
+			    varible_declaration(lex);
+			    while (lex->last_token_type == TOKEN_COMMA){
+			        PL0Lex_get_token(lex);
+			        varible_declaration(lex);
+			    }
+			}
 	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
