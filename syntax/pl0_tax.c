@@ -98,35 +98,20 @@ void program_block(PL0Lex * lex) {
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
-	do {
+	do{
 		if (lex->last_token_type == TOKEN_CONST) {
 			PL0Lex_get_token(lex);
 			const_declaration(lex);
-			while (lex->last_token_type == TOKEN_COMMA) {
-				PL0Lex_get_token(lex);
-				const_declaration(lex);
-<<<<<<< HEAD
 				while (lex->last_token_type == TOKEN_COMMA) {
 					PL0Lex_get_token(lex);
 					const_declaration(lex);
 				}
 				if (lex->last_token_type == TOKEN_SEMICOLON) {
 					PL0Lex_get_token(lex);
-                    break;
 				}
 				else {
 					printf("missing ',' or ';'\n");
 				}
-			} while (lex->last_token_type == TOKEN_IDENTIFIER);
-=======
 			}
-			if (lex->last_token_type == TOKEN_SEMICOLON) {
-				PL0Lex_get_token(lex);
-			}
-			else {
-				printf("missing ',' or ';'\n");
-			}
->>>>>>> c80cf506755340fe3c536e3a3ff2ac450aa0193f
-		}
 	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
