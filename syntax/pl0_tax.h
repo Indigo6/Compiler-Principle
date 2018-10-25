@@ -1,6 +1,7 @@
 #ifndef __PL0_TAX_H__
 #define __PL0_TAX_H__
 
+#include "../lex/pl0_lex.h"
 #define TXMAX				500 		// max length of token table
 #define MAXADDRESS 	32767		// max address
 

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../common/common.h"
-#include "../lex/pl0_lex.h"
 #include "pl0_tax.h"
 #include <string.h>
 
