@@ -92,5 +92,6 @@ void program_block(PL0Lex * lex) {
 				}
 			} while (lex->last_token_type == TOKEN_IDENTIFIER);
 		}
+		else if(lex->last_token_type == TOKEN_VAR){}
 	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
