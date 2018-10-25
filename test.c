@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "common/common.h"
 #include "lex/pl0_lex.h"
+#include "syntax/pl0_tax.h"
 
 void show_help(const char * arg0)
 {
@@ -26,7 +27,7 @@ int main(int argc, char * argv[])
 
 	/* Start */
 	printf("=== This is the program for PL/0 testing ===\n");
-	
+
 	/* Setup */
 	compiler = PL0Compiler_create();
 
@@ -61,6 +62,10 @@ int main(int argc, char * argv[])
 	}
 
 	printf("--- Lexical Analysis testing end. ---\n");
+
+	/*test syntax ayalysis*/
+	PL0Lex_get_token(lex);
+	program_block(lex);
 
 	/* Cleanup */
 	fclose(fin);

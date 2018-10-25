@@ -140,7 +140,6 @@ BOOL get_token(PL0Lex * lex){
                     //printf("Return from s1.\n");
                     return TRUE;
                 }
-                break;
             }
             case 2:{
                 sym[1] = (char)fgetc(fin);
@@ -168,7 +167,6 @@ BOOL get_token(PL0Lex * lex){
                         return TRUE;
                     }
                 }
-                break;
             }
             case 3:{
                 if(is_symbol(sym)!=-1){ //Check if len-two-symbol is valid
@@ -229,7 +227,6 @@ BOOL get_token(PL0Lex * lex){
                     }
                     continue;
                 }
-                break;
             }
             case 6:{
                 letter = (char)fgetc(fin);
@@ -250,7 +247,6 @@ BOOL get_token(PL0Lex * lex){
                     }
                     continue;
                 }
-                break;
             }
         }
     }

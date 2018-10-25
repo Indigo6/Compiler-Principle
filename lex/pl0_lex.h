@@ -20,7 +20,7 @@ typedef enum _tPL0TokenType {
 	TOKEN_TIMES,	/* * */
 	TOKEN_SLASH,	/* / */
 	TOKEN_EQU,  	/* = */
-	TOKEN_NEQ,  	/* <> */
+	TOKEN_NEQ,  	/* != */
 	TOKEN_LES,  	/* < */
 	TOKEN_LEQ,  	/* <= */
 	TOKEN_GTR,  	/* > */
@@ -50,12 +50,12 @@ extern const char * TOKEN_SYMBOLS[NSYM];
 typedef struct _tPL0Lex {
 	/* Parent return pointer */
 	struct _tPL0Compiler * compiler;
-	
 	/* For output */
 	PL0TokenType last_token_type;
 	char last_id[MAX_ID_LEN + 1];
 	int last_num;
 
+	short last_level;
 
 	/** --------------------------
 	 * TODO: Your variables here
