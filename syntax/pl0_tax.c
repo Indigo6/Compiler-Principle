@@ -33,11 +33,11 @@ void statement(PL0Lex * lex) {//语句
 
 void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
-	if(lex->last_token_type == TOKEN_ODD){//line 1
+	if(lex->last_token_type == TOKEN_ODD){//line 1，read odd
 		PL0Lex_get_token(lex);
 		expression(lex);
 	}
-	else{//line 2
+	else{//line 2， read expression
 		PL0Lex_get_token(lex);
 		expression(lex);
 		PL0Lex_get_token(lex);
@@ -59,6 +59,22 @@ void term(PL0Lex * lex) {//xiang
 
 void factor(PL0Lex * lex) {//yinzi
 	printf("analysis the factor\n");
+	if(lex->last_token_type == TOKEN_MINUS){//line 3
+		PL0Lex_get_token(lex);
+		expression(lex);
+	}
+	else if(lex->last_token_type == TOKEN_LPAREN){//line 4
+		PL0Lex_get_token(lex);
+		expression(lex);
+		PL0Lex_get_token(lex);
+		if(lex->last_token_type != TOKEN_RPAREN) printf("RPAREN ')' needed!\n");
+	}
+	else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER){//line 1&2
+		//DO SOMETHING?	
+	}
+	else{
+		printf("illegal factor!\n");	
+	}
 }
 
 
