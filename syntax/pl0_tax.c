@@ -29,6 +29,27 @@ void table_append(PL0Lex * lex, int kind) {
 /*functions for syntax analysis*/
 void statement(PL0Lex * lex) {
 	printf("analysis the statement\n");
+	if(lex->last_token_type == TOKEN_IDENTIFIER){
+		PL0Lex_get_token(lex);
+		if(lex->last_token_type == TOKEN_BECOMES){
+			
+		}
+	}
+	else if(lex->last_token_type == TOKEN_CALL){
+		PL0Lex_get_token(lex);
+	}
+	else if(lex->last_token_type == TOKEN_BEGIN){
+		PL0Lex_get_token(lex);
+	}
+	else if(lex->last_token_type == TOKEN_IF){
+		PL0Lex_get_token(lex);
+	}
+	else if(lex->last_token_type == TOKEN_WHILE){
+		PL0Lex_get_token(lex);
+	}
+	else{
+
+	}
 }
 
 void condition(PL0Lex * lex) {
@@ -86,6 +107,7 @@ void program_block(PL0Lex * lex) {
 				}
 				if (lex->last_token_type == TOKEN_SEMICOLON) {
 					PL0Lex_get_token(lex);
+					break;
 				}
 				else {
 					printf("missing ',' or ';'\n");
