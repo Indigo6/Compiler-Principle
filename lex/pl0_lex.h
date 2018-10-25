@@ -55,7 +55,7 @@ typedef struct _tPL0Lex {
 	char last_id[MAX_ID_LEN + 1];
 	int last_num;
 
-	int last_level;
+	short last_level;
 
 	/** --------------------------
 	 * TODO: Your variables here
