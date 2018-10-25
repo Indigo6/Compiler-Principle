@@ -33,6 +33,20 @@ void statement(PL0Lex * lex) {//语句
 
 void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
+	if(lex->last_token_type == TOKEN_ODD){//line 1
+		PL0Lex_get_token(lex);
+		expression(lex);
+	}
+	else{//line 2
+		PL0Lex_get_token(lex);
+		expression(lex);
+		PL0Lex_get_token(lex);
+		if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ){
+			PL0Lex_get_token(lex);
+			expression(lex);
+		}
+		else printf("compare symbols needed!\n");
+	}
 }
 
 void expression(PL0Lex * lex) {//表达shi
