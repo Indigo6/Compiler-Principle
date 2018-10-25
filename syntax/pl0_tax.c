@@ -27,23 +27,23 @@ void table_append(PL0Lex * lex, int kind) {
 } //table_append
 
 /*functions for syntax analysis*/
-void statement(PL0Lex * lex) {
+void statement(PL0Lex * lex) {//语句
 	printf("analysis the statement\n");
 }
 
-void condition(PL0Lex * lex) {
+void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
 }
 
-void expression(PL0Lex * lex) {
+void expression(PL0Lex * lex) {//表达shi
 	printf("analysis the expression\n");
 }
 
-void term(PL0Lex * lex) {
+void term(PL0Lex * lex) {//xiang
 	printf("analysis the term\n");
 }
 
-void factor(PL0Lex * lex) {
+void factor(PL0Lex * lex) {//yinzi
 	printf("analysis the factor\n");
 }
 
