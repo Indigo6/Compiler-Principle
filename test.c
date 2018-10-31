@@ -65,6 +65,8 @@ int main(int argc, char * argv[])
 
 	/*test syntax ayalysis*/
 	PL0Lex_get_token(lex);
+	stack* taxstack = (stack*)malloc(sizeof(stack));
+	initializestack(taxstack);
 	program_block(lex);
 
 	/* Cleanup */

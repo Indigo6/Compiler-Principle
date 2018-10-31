@@ -4,7 +4,7 @@
 #include "pl0_tax.h"
 #include <string.h>
 
-stack * taxstack;
+extern stack * taxstack;
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
 	strcpy(token_table[table_index].name, lex->last_id);
@@ -166,8 +166,8 @@ void program_block(PL0Lex * lex) {
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
-	taxstack = (stack*)malloc(sizeof(stack));
-	initializestack(taxstack);
+	push(taxstack,0); // p->B
+	print_stack(taxstack);
 	do{
 		if (lex->last_token_type == TOKEN_CONST) {
 			PL0Lex_get_token(lex);
