@@ -20,8 +20,8 @@ extern const char* lexLabel[] = {"P","B","D",".","S","C","V","R","const","A",";"
   T in 42, G in 43, + in 44, - in 45, * in 46 , / in 47, Y in 48, Z in 49, ( iin 50, ) in 51*/
 typedef struct{
     int Stack[MAXSTACKSIZE];
-    int lenth;
-}*stack;
+    int length;
+}stack;
 /*struct for token table*/
 typedef struct {
 	char name[MAX_ID_LEN + 1];
@@ -52,8 +52,10 @@ void expression(PL0Lex * lex); //analysis the expression
 void term(PL0Lex * lex); //analysis the term
 void factor(PL0Lex * lex); //analysis the factor
 void program_block(PL0Lex * lex); //analysis the program block
-int top(stack s);
-int pop(stack s);
-int push(stack s, int element);
-void print_stack(stack s);
+int top(stack* s);
+int pop(stack* s);
+void push(stack* s, int element);
+void print_stack(stack* s);
+void initializestack(stack* s);
+void destroystack(stack* s);
 #endif //pl0_tax.h

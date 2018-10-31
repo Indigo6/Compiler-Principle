@@ -4,6 +4,7 @@
 #include "pl0_tax.h"
 #include <string.h>
 
+stack * taxstack;
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
 	strcpy(token_table[table_index].name, lex->last_id);
@@ -26,6 +27,43 @@ void table_append(PL0Lex * lex, int kind) {
 	table_index += 1;
 } //table_append
 
+void initializestack(stack* s){
+    for(int i = 0; i < MAXSTACKSIZE;i++){
+        s->Stack[i] = -1;  // because index of lebel tabel can not be minus
+    }
+    s->length = -1;
+}
+void destroystack(stack* s){
+    free(s);
+}
+
+int top(stack* s){
+    if(s->length < 0){
+        printf("Stack is empty!");
+        return -1;
+    }else{
+    return s->Stack[s->length];
+ }
+}
+
+int pop(stack* s){
+    if(s->length < 0){
+        printf("Stack is empty!");
+        return -1;
+    }
+    else{
+        return s->Stack[s->length--];
+    }
+}
+
+void push(stack* s, int element){
+    if(s->length+1 == MAXSTACKSIZE){
+        printf("Stack is full!");
+    }
+    else{
+        s->Stack[++s->length] = element;
+    }
+}
 /*functions for syntax analysis*/
 void statement(PL0Lex * lex) {//语句
 	printf("analysis the statement\n");
@@ -128,6 +166,8 @@ void program_block(PL0Lex * lex) {
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
+	taxstack = (stack*)malloc(sizeof(stack));
+	initializestack(taxstack);
 	do{
 		if (lex->last_token_type == TOKEN_CONST) {
 			PL0Lex_get_token(lex);
