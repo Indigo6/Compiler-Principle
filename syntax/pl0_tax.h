@@ -53,6 +53,7 @@ void term(PL0Lex * lex); //analysis the term
 void factor(PL0Lex * lex); //analysis the factor
 void program_block(PL0Lex * lex); //analysis the program block
 void const_declaration(PL0Lex * lex);
+void variable_declaration(PL0Lex* lex);
 void W(PL0Lex* lex);
 int top(stack* s);
 int pop(stack* s);
