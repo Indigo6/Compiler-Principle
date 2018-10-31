@@ -16,7 +16,7 @@ PL0Lex * PL0Lex_create(PL0Compiler * parent)
 	lex->end = 0;
 	lex->offset = 0;
 	lex->isEOF = FALSE;
-
+	lex->last_level = 0;
 	return lex;
 }
 
