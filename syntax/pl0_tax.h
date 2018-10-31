@@ -55,4 +55,5 @@ void program_block(PL0Lex * lex); //analysis the program block
 int top(stack s);
 int pop(stack s);
 int push(stack s, int element);
+void print_stack(stack s);
 #endif //pl0_tax.h
