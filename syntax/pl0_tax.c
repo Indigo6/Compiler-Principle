@@ -227,6 +227,7 @@ void variable_declaration(PL0Lex * lex){ //E
         push(taxstack,19);
         push(taxstack,11);
         print_stack(taxstack);
+        table_append(lex,ID_VARIABLE);
         pop(taxstack); //reduce id
         print_stack(taxstack);
         PL0Lex_get_token(lex);
@@ -253,6 +254,10 @@ void variable_declaration(PL0Lex * lex){ //E
 void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
     lex->last_level ++;
     if(lex->last_token_type == TOKEN_IDENTIFIER){
+        //Table * tmptable = malloc(sizeof(Table));
+        //strcpy(tmptable->name,lex->last_id);
+        //tmptable->level = lex->last_level;
+        table_append(lex,ID_PROCEDURE);
         pop(taxstack); // reduce id
         print_stack(taxstack);
         PL0Lex_get_token(lex);
