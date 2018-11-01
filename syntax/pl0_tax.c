@@ -296,7 +296,7 @@ void program_block(PL0Lex * lex) {
 		        tmp = pop(taxstack);//reduce var
 		        print_stack(taxstack);
 			    PL0Lex_get_token(lex);
-			    varible_declaration(lex);
+			    variable_declaration(lex);
 			    /*while (lex->last_token_type == TOKEN_COMMA){
 			        PL0Lex_get_token(lex);
 			        varible_declaration(lex);
