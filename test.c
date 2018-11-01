@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
 	}
 
 	printf("--- Lexical Analysis testing end. ---\n");
-
+	fseek(fin,0,SEEK_SET);
 	/*test syntax ayalysis*/
 	PL0Lex_get_token(lex);
 	program_block(lex);

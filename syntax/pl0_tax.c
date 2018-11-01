@@ -37,14 +37,14 @@ void initializestack(stack* s){
     for(int i = 0; i < MAXSTACKSIZE;i++){
         s->Stack[i] = -1;  // because index of lebel tabel can not be minus
     }
-    s->length = -1;
+    s->length = 0;
 }
 void destroystack(stack* s){
     free(s);
 }
 
 int top(stack* s){
-    if(s->length < 0){
+    if(s->length <= 0){
         printf("Stack is empty!");
         return -1;
     }else{
@@ -53,12 +53,12 @@ int top(stack* s){
 }
 
 int pop(stack* s){
-    if(s->length < 0){
+    if(s->length <= 0){
         printf("Stack is empty!");
         return -1;
     }
     else{
-        return s->Stack[s->length--];
+        return s->Stack[--s->length];
     }
 }
 
@@ -67,7 +67,7 @@ void push(stack* s, int element){
         printf("Stack is full!");
     }
     else{
-        s->Stack[++s->length] = element;
+        s->Stack[s->length++] = element;
     }
 }
 void print_stack(stack* s){
@@ -473,7 +473,7 @@ void program_block(PL0Lex * lex) { // P -> B .
 	print_stack(taxstack);
     //int tmp = pop(taxstack);// pop P
     //push(taxstack,3);
-    PL0Lex_get_token(lex);
+    //PL0Lex_get_token(lex);
     // if not in the FIRST set of P and FIRST set of B
     if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
     && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
@@ -486,6 +486,7 @@ void program_block(PL0Lex * lex) { // P -> B .
                lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
     }
     pop(taxstack); // pop P
+    push(taxstack,3); // push .
     push(taxstack,1); //push B
     print_stack(taxstack);
     block(lex); //B
