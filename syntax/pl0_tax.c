@@ -297,6 +297,7 @@ void program_block(PL0Lex * lex) {
 		        print_stack(taxstack);
 			    PL0Lex_get_token(lex);
 			    variable_declaration(lex);
+			    PL0Lex_get_token(lex);
 			    /*while (lex->last_token_type == TOKEN_COMMA){
 			        PL0Lex_get_token(lex);
 			        varible_declaration(lex);
@@ -308,6 +309,7 @@ void program_block(PL0Lex * lex) {
 		    //D -> epsilon
 		    tmp = pop(taxstack); // D reduced by epsilon
 		    print_stack(taxstack);
+		    //PL0Lex_get_token(lex); // don't need get another token
             break;
 		}
 	} while(TRUE);//while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
