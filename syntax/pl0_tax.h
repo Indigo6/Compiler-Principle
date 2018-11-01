@@ -7,7 +7,7 @@
 #define MAXSTACKSIZE 200
 
 /*variables for token table*/
-int table_index = 0;
+//int table_index = 0;
 
 extern const char* lexLabel[];
 /* P in 0, B in 1, D in 2, . in 3, S in 4, C in 5, V in 6, R in 7, const in 8, A in 9, ; in 10, id in 11

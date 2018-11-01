@@ -10,6 +10,7 @@ const char* lexLabel[] = {"P","B","D",".","S","C","V","R","const","A",";","id","
                           "end","if","O","then","while","do","odd","X","Q","!=","<=",">=",
                           "<",">","T","G","+","-","*","/","Y","Z","(",")"};
 stack* taxstack ;
+int table_index = 0;
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
 	strcpy(token_table[table_index].name, lex->last_id);
