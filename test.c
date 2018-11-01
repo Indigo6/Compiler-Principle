@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 	/* Cleanup */
 	fclose(fin);
 	PL0Compiler_destroy(compiler);
-
+	destroystack(taxstack);
 	/* Finish */
 	printf("=== Normal end for testing. ===\n");
 	return 0;

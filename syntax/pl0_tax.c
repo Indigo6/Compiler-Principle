@@ -66,7 +66,7 @@ void push(stack* s, int element){
 }
 void print_stack(stack* s){
     for(int i = 0; i< s->length;i++){
-        printf("%s",lexLabel[s->Stack[i]]);
+        printf("%s ",lexLabel[s->Stack[i]]);
     }
     printf("\n");
 }
@@ -162,18 +162,20 @@ void const_declaration(PL0Lex * lex) { //A
 				PL0Lex_get_token(lex);
 				if(lex->last_token_type!=TOKEN_COMMA && lex->last_token_type!=TOKEN_SEMICOLON){
                     printf("missing ',' or ';' at line %d\n",lex->line_number);
+                    pop(taxstack); // pop W
                     print_stack(taxstack);
                     return;
 				}
 				else{
 				    W(lex);
+				    //PL0Lex_get_token(lex);
 				}
 			} else {
 				printf("there must be a number to follow '=' at line %d\n",lex->line_number);
 				pop(taxstack); //pop num
 				pop(taxstack); // pop W
                 pop(taxstack);
-                do{
+                do{  // like gcc , skip all token until ";"
                     PL0Lex_get_token(lex);
                 }while(lex->last_token_type!=TOKEN_SEMICOLON);
                 print_stack(taxstack);
@@ -199,33 +201,52 @@ void const_declaration(PL0Lex * lex) { //A
 		print_stack(taxstack);
         return;
 	}
-	}
+
 } //const_declaration
 
-void varible_declaration(PL0Lex * lex){ //E
+void H(PL0Lex * lex){ //H
+    if(lex->last_token_type==TOKEN_COMMA){ //H -> ,E
+        pop(taxstack);// pop H
+        push(taxstack,18);
+        push(taxstack,15);
+        print_stack(taxstack);
+        pop(taxstack); //reduce ,
+        variable_declaration(lex);
+    } else{ // H -> ;
+        pop(taxstack);
+        push(taxstack,10);
+        print_stack(taxstack);
+        pop(taxstack); //reduce ;
+        print_stack(taxstack);
+
+    }
+}
+void variable_declaration(PL0Lex * lex){ //E
     if(lex->last_token_type == TOKEN_IDENTIFIER){
+        pop(taxstack); // E -> idH
+        push(taxstack,19);
+        push(taxstack,11);
+        print_stack(taxstack);
+        pop(taxstack); //reduce id
+        print_stack(taxstack);
         PL0Lex_get_token(lex);
-        if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_BECOMES){
-            if(lex->last_token_type == TOKEN_BECOMES){
-                printf("found ':=' when expecting '='\n");
-            }
-            PL0Lex_get_token(lex);
-            if (lex->last_token_type == TOKEN_NUMBER) {
-                table_append(lex, ID_VARIABLE);
-                PL0Lex_get_token(lex);
-            } else {
-                printf("there must be a number to follow '='\n");
-            }
-        } else{
-            printf("there must be an '=' to follow the identifier\n");
+        if(lex->last_token_type!=TOKEN_COMMA && lex->last_token_type!=TOKEN_SEMICOLON){
+            printf("missing ',' or ';' at line %d\n",lex->line_number);
+            pop(taxstack); //pop H
+            print_stack(taxstack);
+            return;
+        }
+        else{
+            H(lex);
         }
     }
     else{
         printf("There must be an identifier to follow 'var' at line %d\n",lex->line_number);
-        pop(taxstack);
-        while(PL0Lex_get_token(lex)!=TOKEN_SEMICOLON){
-
-        }
+        pop(taxstack); // pop E
+        do{
+            PL0Lex_get_token(lex);
+        }while(lex->last_token_type!=TOKEN_SEMICOLON);
+        print_stack(taxstack);
     }
 }//variable_declaration
 
@@ -251,6 +272,7 @@ void program_block(PL0Lex * lex) {
 		    print_stack(taxstack);
 			PL0Lex_get_token(lex);
 			const_declaration(lex);
+			PL0Lex_get_token(lex);
 				/*while (lex->last_token_type == TOKEN_COMMA) {
 					PL0Lex_get_token(lex);
 					const_declaration(lex);
@@ -276,7 +298,7 @@ void program_block(PL0Lex * lex) {
 			        PL0Lex_get_token(lex);
 			        varible_declaration(lex);
 			    }*/
-			} else if(lex -> last_token_type == TOKEN_PROCEDURE){
+			} else if(lex -> last_token_type == TOKEN_PROCEDURE){ //D->RD
 
 		}
 		else{
@@ -285,5 +307,5 @@ void program_block(PL0Lex * lex) {
 		    print_stack(taxstack);
             break;
 		}
-	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
+	} while(TRUE);//while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
