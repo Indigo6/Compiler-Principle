@@ -142,6 +142,8 @@ void W(PL0Lex* lex){
         int tmp = pop(taxstack);
         push(taxstack,10);
         print_stack(taxstack);
+        pop(taxstack); //pop ;， reduce ;
+        print_stack(taxstack);
     }
 }
 void const_declaration(PL0Lex * lex) { //A
@@ -240,6 +242,10 @@ void variable_declaration(PL0Lex * lex){ //E
         if(lex->last_token_type!=TOKEN_COMMA && lex->last_token_type!=TOKEN_SEMICOLON){
             printf("missing ',' or ';' at line %d\n",lex->line_number);
             pop(taxstack); //pop H
+            do{
+                PL0Lex_get_token(lex);
+            }while (lex->last_token_type!=TOKEN_SEMICOLON);
+            PL0Lex_get_token(lex);
             print_stack(taxstack);
             return;
         }
