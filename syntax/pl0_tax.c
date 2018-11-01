@@ -251,11 +251,15 @@ void variable_declaration(PL0Lex * lex){ //E
 }//variable_declaration
 
 void procedure_declaration(PL0Lex* lex){
+    lex->last_level ++;
+    if(lex->last_token_type == TOKEN_IDENTIFIER){
 
+    }
+    else{
+
+    }
 }
 void block(PL0Lex *lex){ // B
-    push(taxstack,1);// push B
-    print_stack(taxstack);
     pop(taxstack); //pop B
     push(taxstack,23);
     push(taxstack,2);
@@ -308,6 +312,7 @@ void block(PL0Lex *lex){ // B
             push(taxstack,21);
             print_stack(taxstack);
             pop(taxstack); //reduce procedure
+            print_stack(taxstack);
             PL0Lex_get_token(lex);
             procedure_declaration(lex);
             PL0Lex_get_token(lex);
@@ -321,6 +326,8 @@ void block(PL0Lex *lex){ // B
         }
     } while(TRUE);//while(lex->last_token_type == TOKEN_CONST
     // || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
+
+    // !!!------  F should be written below here ------ !!!
 }
 void program_block(PL0Lex * lex) { // P -> B .
 	printf("analysis the program block\n");
@@ -328,9 +335,24 @@ void program_block(PL0Lex * lex) { // P -> B .
 	// PL0Lex_get_token(lex);
 	push(taxstack,0); // p
 	print_stack(taxstack);
-    int tmp = pop(taxstack);// pop P
-    push(taxstack,3);
-    block(lex);
+    //int tmp = pop(taxstack);// pop P
+    //push(taxstack,3);
+    PL0Lex_get_token(lex);
+    // if not in the FIRST set of P and FIRST set of B
+    if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+    && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+    lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE){
+        printf("at the beginning of program, it must be 'const' or 'var' or 'procedure' or  'identifier' or 'call' or 'if' or 'begin' or 'while'\n ")
+        do{
+            PL0Lex_get_token(lex);
+        }while(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+               && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+               lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
+    }
+    pop(taxstack); // pop P
+    push(taxstack,1); //push B
+    print_stack(taxstack);
+    block(lex); //B
     PL0Lex_get_token(lex);
     if(lex->last_token_type==TOKEN_PERIOD){
         pop(taxstack); // pop .
