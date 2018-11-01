@@ -9,10 +9,7 @@
 /*variables for token table*/
 int table_index = 0;
 
-extern const char* lexLabel[] = {"P","B","D",".","S","C","V","R","const","A",";","id","=","num","W",",",
-                                 "V","var","E","H","R","procedure","S","F","M",":=","call","begin",
-                                 "end","if","O","then","while","do","odd","X","Q","!=","<=",">=",
-                                 "<",">","T","G","+","-","*","/","Y","Z","(",")"};
+extern const char* lexLabel[];
 /* P in 0, B in 1, D in 2, . in 3, S in 4, C in 5, V in 6, R in 7, const in 8, A in 9, ; in 10, id in 11
   = in 12, num in 13, W in 14, , in 15, V in 16, var in 17, E in 18 H in 19, R in 20, procedure in 21
   S in 22, F in 23, M in 24, := in 25, call in 26, begin in 27, end in 28, if in 29, O in 30, then in 31,

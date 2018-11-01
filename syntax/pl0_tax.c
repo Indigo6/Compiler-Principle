@@ -4,7 +4,12 @@
 #include "pl0_tax.h"
 #include <string.h>
 
-extern stack * taxstack;
+
+const char* lexLabel[] = {"P","B","D",".","S","C","V","R","const","A",";","id","=","num","W",",",
+                          "V","var","E","H","R","procedure","S","F","M",":=","call","begin",
+                          "end","if","O","then","while","do","odd","X","Q","!=","<=",">=",
+                          "<",">","T","G","+","-","*","/","Y","Z","(",")"};
+stack* taxstack ;
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
 	strcpy(token_table[table_index].name, lex->last_id);
@@ -458,6 +463,8 @@ void block(PL0Lex *lex){ // B
     // !!!------  F should be written below here ------ !!!
 }
 void program_block(PL0Lex * lex) { // P -> B .
+    taxstack = (stack*)malloc(sizeof(stack));
+    initializestack(taxstack);
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
@@ -489,5 +496,5 @@ void program_block(PL0Lex * lex) { // P -> B .
     else{
         printf("there must an '.' in the program block end \n");
     }
-
+destroystack(taxstack);
 } //program_block

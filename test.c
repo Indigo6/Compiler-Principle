@@ -4,7 +4,6 @@
 #include "common/common.h"
 #include "lex/pl0_lex.h"
 #include "syntax/pl0_tax.h"
-
 void show_help(const char * arg0)
 {
 	printf("Usage: %s <src>\n\n", arg0);
@@ -65,14 +64,10 @@ int main(int argc, char * argv[])
 
 	/*test syntax ayalysis*/
 	PL0Lex_get_token(lex);
-	stack* taxstack = (stack*)malloc(sizeof(stack));
-	initializestack(taxstack);
 	program_block(lex);
-
 	/* Cleanup */
 	fclose(fin);
 	PL0Compiler_destroy(compiler);
-	destroystack(taxstack);
 	/* Finish */
 	printf("=== Normal end for testing. ===\n");
 	return 0;
