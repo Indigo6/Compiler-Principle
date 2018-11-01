@@ -250,67 +250,94 @@ void variable_declaration(PL0Lex * lex){ //E
     }
 }//variable_declaration
 
-void program_block(PL0Lex * lex) {
+void procedure_declaration(PL0Lex* lex){
+
+}
+void block(PL0Lex *lex){ // B
+    push(taxstack,1);// push B
+    print_stack(taxstack);
+    pop(taxstack); //pop B
+    push(taxstack,23);
+    push(taxstack,2);
+    print_stack(taxstack); // B -> DF
+    do{//D
+        if (lex->last_token_type == TOKEN_CONST) {
+            push(taxstack, 5); // D -> CD
+            print_stack(taxstack);
+            pop(taxstack);
+            push(taxstack,9); // C -> constA
+            push(taxstack,8);
+            print_stack(taxstack);
+            pop(taxstack); // reduce const
+            print_stack(taxstack);
+            PL0Lex_get_token(lex);
+            const_declaration(lex);
+            PL0Lex_get_token(lex);
+            /*while (lex->last_token_type == TOKEN_COMMA) {
+                PL0Lex_get_token(lex);
+                const_declaration(lex);
+            }
+            if (lex->last_token_type == TOKEN_SEMICOLON) {
+                PL0Lex_get_token(lex);
+            }
+            else {
+                printf("missing ',' or ';'\n");
+            }*/
+        } else if(lex->last_token_type == TOKEN_VAR){//D -> VD
+            push(taxstack,6);
+            print_stack(taxstack);
+            pop(taxstack); //V -> var E
+            push(taxstack,18);
+            push(taxstack,17);
+            print_stack(taxstack);
+            pop(taxstack);//reduce var
+            print_stack(taxstack);
+            PL0Lex_get_token(lex);
+            variable_declaration(lex);
+            PL0Lex_get_token(lex);
+            /*while (lex->last_token_type == TOKEN_COMMA){
+                PL0Lex_get_token(lex);
+                varible_declaration(lex);
+            }*/
+        } else if(lex -> last_token_type == TOKEN_PROCEDURE){ //D->RD
+            push(taxstack,10);
+            print_stack(taxstack);
+            pop(taxstack); // R -> procedure id;P
+            push(taxstack,0); //push p
+            push(taxstack,10);
+            push(taxstack,21);
+            print_stack(taxstack);
+            pop(taxstack); //reduce procedure
+            PL0Lex_get_token(lex);
+            procedure_declaration(lex);
+            PL0Lex_get_token(lex);
+        }
+        else{ // then should determine if it is in the FIRST of F, then it has an error
+            //D -> epsilon
+            pop(taxstack); // D reduced by epsilon
+            print_stack(taxstack);
+            //PL0Lex_get_token(lex); // don't need get another token
+            break;
+        }
+    } while(TRUE);//while(lex->last_token_type == TOKEN_CONST
+    // || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
+}
+void program_block(PL0Lex * lex) { // P -> B .
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
 	push(taxstack,0); // p
 	print_stack(taxstack);
     int tmp = pop(taxstack);// pop P
-    push(taxstack,1);// p->B
-    print_stack(taxstack);
-    pop(taxstack); //pop B
-    push(taxstack,23);
-    push(taxstack,2);
-    print_stack(taxstack); // B -> DF
-	do{//D
-		if (lex->last_token_type == TOKEN_CONST) {
-		    push(taxstack, 5); // D -> CD
-		    print_stack(taxstack);
-		    tmp = pop(taxstack);
-		    push(taxstack,9); // C -> constA
-		    push(taxstack,8);
-		    print_stack(taxstack);
-		    tmp = pop(taxstack); // reduce const
-		    print_stack(taxstack);
-			PL0Lex_get_token(lex);
-			const_declaration(lex);
-			PL0Lex_get_token(lex);
-				/*while (lex->last_token_type == TOKEN_COMMA) {
-					PL0Lex_get_token(lex);
-					const_declaration(lex);
-				}
-				if (lex->last_token_type == TOKEN_SEMICOLON) {
-					PL0Lex_get_token(lex);
-				}
-				else {
-					printf("missing ',' or ';'\n");
-				}*/
-			} else if(lex->last_token_type == TOKEN_VAR){//D -> VD
-		        push(taxstack,6);
-		        print_stack(taxstack);
-		        tmp = pop(taxstack); //V -> var E
-		        push(taxstack,18);
-		        push(taxstack,17);
-		        print_stack(taxstack);
-		        tmp = pop(taxstack);//reduce var
-		        print_stack(taxstack);
-			    PL0Lex_get_token(lex);
-			    variable_declaration(lex);
-			    PL0Lex_get_token(lex);
-			    /*while (lex->last_token_type == TOKEN_COMMA){
-			        PL0Lex_get_token(lex);
-			        varible_declaration(lex);
-			    }*/
-			} else if(lex -> last_token_type == TOKEN_PROCEDURE){ //D->RD
+    push(taxstack,3);
+    block(lex);
+    PL0Lex_get_token(lex);
+    if(lex->last_token_type==TOKEN_PERIOD){
+        pop(taxstack); // pop .
+        printf("analysis end1");
+    }
+    else{
+        printf("there must an '.' in the program block end \n");
+    }
 
-		}
-		else{
-		    //D -> epsilon
-		    tmp = pop(taxstack); // D reduced by epsilon
-		    print_stack(taxstack);
-		    //PL0Lex_get_token(lex); // don't need get another token
-            break;
-		}
-	} while(TRUE);//while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
