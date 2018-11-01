@@ -254,9 +254,12 @@ void program_block(PL0Lex * lex) {
 	printf("analysis the program block\n");
 	// PL0Lex * lex = (PL0Lex *) calloc(1, sizeof(PL0Lex));
 	// PL0Lex_get_token(lex);
-	push(taxstack,0); // p->B
+	push(taxstack,0); // p
 	print_stack(taxstack);
-    int tmp = pop(taxstack);
+    int tmp = pop(taxstack);// pop P
+    push(taxstack,1);// p->B
+    print_stack(taxstack);
+    pop(taxstack); //pop B
     push(taxstack,23);
     push(taxstack,2);
     print_stack(taxstack); // B -> DF
