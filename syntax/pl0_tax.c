@@ -250,17 +250,138 @@ void variable_declaration(PL0Lex * lex){ //E
     }
 }//variable_declaration
 
-void procedure_declaration(PL0Lex* lex){
+void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
     lex->last_level ++;
     if(lex->last_token_type == TOKEN_IDENTIFIER){
+        pop(taxstack); // reduce id
+        print_stack(taxstack);
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type==TOKEN_SEMICOLON){
+            pop(taxstack); // reduce ;
+            print_stack(taxstack);
+            PL0Lex_get_token(lex);
+            if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+               && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+               lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE){
+                printf("at the beginning of program block, it must be 'const' or 'var' or 'procedure' or  'identifier' or 'call' or 'if' or 'begin' or 'while'\n ");
+                do{
+                    PL0Lex_get_token(lex);
+                }while(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+                       && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+                       lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
+                block(lex);
+                PL0Lex_get_token(lex);
+                if(lex->last_token_type==TOKEN_SEMICOLON){
+                    pop(taxstack); // reduce ;
+                    print_stack(taxstack);
+                }
+                else{
+                    pop(taxstack);
+                    printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+                }
+            }
+            else{
+               block(lex);
+                PL0Lex_get_token(lex);
+                if(lex->last_token_type==TOKEN_SEMICOLON){
+                    pop(taxstack); // reduce ;
+                    print_stack(taxstack);
+                }
+                else{
+                    pop(taxstack);
+                    printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+                }
+            }
+        }
+        else{
+            printf("There must be a ';' follow identifier at line %d \n",lex->line_number);
+            pop(taxstack); //pop ;
+            while (lex->last_token_type!=TOKEN_SEMICOLON){
+                PL0Lex_get_token(lex);
+            }
+            if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+               && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+               lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE) {
+                do{
+                    PL0Lex_get_token(lex);
+                }while(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+                       && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+                       lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
+                print_stack(taxstack);
+                block(lex);
+                PL0Lex_get_token(lex);
+                if(lex->last_token_type==TOKEN_SEMICOLON){
+                    pop(taxstack); // reduce ;
+                    print_stack(taxstack);
+                }
+                else{
+                    pop(taxstack);
+                    printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+                }
+            }
+            else{
+                print_stack(taxstack);
+                block(lex);
+                PL0Lex_get_token(lex);
+                if(lex->last_token_type==TOKEN_SEMICOLON){
+                    pop(taxstack); // reduce ;
+                    print_stack(taxstack);
+                }
+                else{
+                    pop(taxstack);
+                    printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+                }
+            }
 
+        }
     }
     else{
-
+        printf("There must be an identifier follow 'procedure' at line %d\n ",lex->line_number);
+        while(lex->last_token_type!=TOKEN_SEMICOLON){
+            PL0Lex_get_token(lex);
+        }
+        pop(taxstack); //pop id
+        pop(taxstack); //pop ;
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+           && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+           lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE) {
+            do{
+                PL0Lex_get_token(lex);
+            }while(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
+                   && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
+                   lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
+            print_stack(taxstack);
+            block(lex);
+            PL0Lex_get_token(lex);
+            if(lex->last_token_type==TOKEN_SEMICOLON){
+                pop(taxstack); // reduce ;
+                print_stack(taxstack);
+            }
+            else{
+                pop(taxstack);
+                printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+            }
+        }
+        else{
+            print_stack(taxstack);
+            block(lex);
+            PL0Lex_get_token(lex);
+            if(lex->last_token_type==TOKEN_SEMICOLON){
+                pop(taxstack); // reduce ;
+                print_stack(taxstack);
+            }
+            else{
+                pop(taxstack);
+                printf("There must be an ';' at the end of procedure declaration at line %d\n",lex->line_number);
+            }
+        }
     }
+    lex -> last_level --;
 }
 void block(PL0Lex *lex){ // B
     pop(taxstack); //pop B
+    // because FIRST(P) = FIRST(B)
     push(taxstack,23);
     push(taxstack,2);
     print_stack(taxstack); // B -> DF
@@ -306,10 +427,12 @@ void block(PL0Lex *lex){ // B
         } else if(lex -> last_token_type == TOKEN_PROCEDURE){ //D->RD
             push(taxstack,10);
             print_stack(taxstack);
-            pop(taxstack); // R -> procedure id;P
-            push(taxstack,0); //push p
+            pop(taxstack); // R -> procedure id;B;
             push(taxstack,10);
-            push(taxstack,21);
+            push(taxstack,1); //push B
+            push(taxstack,10); // push ;
+            push(taxstack,11); // push id
+            push(taxstack,21); // push procedure
             print_stack(taxstack);
             pop(taxstack); //reduce procedure
             print_stack(taxstack);
@@ -342,7 +465,7 @@ void program_block(PL0Lex * lex) { // P -> B .
     if(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
     && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
     lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE){
-        printf("at the beginning of program, it must be 'const' or 'var' or 'procedure' or  'identifier' or 'call' or 'if' or 'begin' or 'while'\n ")
+        printf("at the beginning of program, it must be 'const' or 'var' or 'procedure' or  'identifier' or 'call' or 'if' or 'begin' or 'while'\n ");
         do{
             PL0Lex_get_token(lex);
         }while(lex->last_token_type != TOKEN_CONST && lex->last_token_type != TOKEN_VAR && lex->last_token_type!=TOKEN_PROCEDURE
