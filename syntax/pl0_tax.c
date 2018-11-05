@@ -129,11 +129,10 @@ void program_block(PL0Lex * lex) {
 				}
 				if (lex->last_token_type == TOKEN_SEMICOLON) {
 					PL0Lex_get_token(lex);
-					break;
 				}
 				else {
 					printf("missing ',' or ';'\n");
 				}
-			}
+		}
 	} while(lex->last_token_type == TOKEN_CONST || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 } //program_block
