@@ -2,4 +2,4 @@ build/*
 .vscode/*
 cmake-build-debug/*
 .idea/*
-example/mytest.txt
+examples/mytest.txt
