@@ -9,7 +9,7 @@ begin
 	begin
 		if odd b then z := z + a;
 		a := 2 * a; b := b / 2;
-	end
+	end;
 end;
 
 procedure gcd;
@@ -21,12 +21,10 @@ begin
 	begin
 		if f < g then g := g - f;
 		if g < f then f := f - g;
-	end
+	end;
 end;
 
 begin
 	x := m; y := n; call multiply;
 	x := 34; y := 36; call gcd;
 end.
-
-
