@@ -62,6 +62,11 @@ int main(int argc, char * argv[])
 
 	printf("--- Lexical Analysis testing end. ---\n");
 	fseek(fin,0,SEEK_SET);
+	lex->line_number = 1;
+	lex->offset = 0;
+	lex ->start = 0;
+	lex ->end = 0;
+	// before syntax analysis, reset lex, otherwise some small problems would happen
 	/*test syntax ayalysis*/
 	PL0Lex_get_token(lex);
 	program_block(lex);
