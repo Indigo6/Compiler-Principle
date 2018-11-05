@@ -1,2 +1,0 @@
-const a = 3;
-var b = 3;
