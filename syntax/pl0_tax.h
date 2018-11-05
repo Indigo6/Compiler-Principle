@@ -43,10 +43,10 @@ enum idtype {
 void table_append(PL0Lex * lex, int kind);
 
 /*functions for syntax analysis*/
-void statement(PL0Lex * lex); //analysis the statement
-void condition(PL0Lex * lex); //analysis the condition statement
-void expression(PL0Lex * lex); //analysis the expression
-void term(PL0Lex * lex); //analysis the term
+void statement(PL0Lex * lex); //analysis the statement F
+void condition(PL0Lex * lex); //analysis the condition statement O
+void expression(PL0Lex * lex); //analysis the expression  X
+void term(PL0Lex * lex); //analysis the term T
 void factor(PL0Lex * lex); //analysis the factor
 void program_block(PL0Lex * lex); //analysis the program block
 void const_declaration(PL0Lex * lex);
@@ -55,6 +55,12 @@ void procedure_declaration(PL0Lex* lex);
 void block(PL0Lex* lex);
 void W(PL0Lex* lex);
 void H(PL0Lex* lex);
+void statements(PL0Lex* lex); // S 语句序列
+void M(PL0Lex* lex); // M 消除左递归
+void Q(PL0Lex* lex); //Q 消除左递归
+void G(PL0Lex* lex); //G
+void Y(PL0Lex* lex); //因子
+void Z(PL0Lex* lex);
 int top(stack* s);
 int pop(stack* s);
 void push(stack* s, int element);
