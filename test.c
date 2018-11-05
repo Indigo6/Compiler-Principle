@@ -4,7 +4,6 @@
 #include "common/common.h"
 #include "lex/pl0_lex.h"
 #include "syntax/pl0_tax.h"
-
 void show_help(const char * arg0)
 {
 	printf("Usage: %s <src>\n\n", arg0);
@@ -62,15 +61,13 @@ int main(int argc, char * argv[])
 	}
 
 	printf("--- Lexical Analysis testing end. ---\n");
-
+	fseek(fin,0,SEEK_SET);
 	/*test syntax ayalysis*/
 	PL0Lex_get_token(lex);
 	program_block(lex);
-
 	/* Cleanup */
 	fclose(fin);
 	PL0Compiler_destroy(compiler);
-
 	/* Finish */
 	printf("=== Normal end for testing. ===\n");
 	return 0;
