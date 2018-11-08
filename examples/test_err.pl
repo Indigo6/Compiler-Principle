@@ -1,30 +1,30 @@
-const m = 7, n = 85 /*符号缺失： ';'*/
-var x, y, z, q r; /*符号缺失： ','*/
-const ; /*后继缺失：const后缺少ident*/
+const m = 7, n = 85 /*miss token: ';'*/
+var x, y, z, q r; /*miss token: ','*/
+const ; /*miss successor: const ident*/
 
-procedure ; /*后继缺失：procedure后缺少ident*/
+procedure ; /*miss successor: procedure ident*/
 var a, b;
 begin
 	a := x; b := y; z := 0;
 	while b > 0 do
 	begin
-		if odd b then z := (z + a * 1; /*匹配错误：括号*/
+		if odd b then z := z + a) * 1; /*matching error: left bracket*/
 		a := 2 * a; b := b / 2;
 	end;
 end;
 
 procedure gcd;
-var ; /*后继缺失：var后缺少ident*/
+var ; /*miss successor: var ident*/
 begin
-	f x; /*后继缺失：ident后缺少:=*/
+	f x; /*miss successor: ident :=*/
 	g := y;
-	while f != g /*匹配错误：while do*/
+	while f != g /*matching error: while do*/
 	begin
-		if f < g  g := g - f; /*匹配错误：if then*/
+		if f < g  g := g - f; /*matching error: if then*/
 		if g < f then f := f - g;
-end; /*匹配错误：begin end*/
+end; /*matching error: begin end*/
 
 begin
 	x := m; y := n; call multiply;
 	x := 34; y := 36; call gcd;
-end /*符号缺失 '.'*/
+end /*miss token: '.'*/
