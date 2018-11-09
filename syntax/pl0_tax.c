@@ -122,15 +122,15 @@ void term(PL0Lex * lex) {//xiang,T->YZ
 	printf("analysis the term\n");
 
 	pop(taxstack);//rm 'X'
-        push(taxstack,49);//Z
-        push(taxstack,48);//Y
-        print_stack(taxstack);
+	push(taxstack,49);//Z
+	push(taxstack,48);//Y
+	print_stack(taxstack);
 	
 	//PL0Lex_get_token(lex);
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	factor(lex);//'Y'
 		Z(lex);//'Z'
-        	PL0Lex_get_token(lex);
+		PL0Lex_get_token(lex);
 	}
         else{}//some error...
 	return;
