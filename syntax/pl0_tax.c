@@ -258,6 +258,7 @@ void W(PL0Lex* lex){
         push(taxstack,15);
         print_stack(taxstack);
         tmp = pop(taxstack); //reduce ,
+        PL0Lex_get_token(lex);
         const_declaration(lex);
     }
     else{//W ->;
@@ -266,6 +267,7 @@ void W(PL0Lex* lex){
         print_stack(taxstack);
         pop(taxstack); //pop ;， reduce ;
         print_stack(taxstack);
+        //PL0Lex_get_token(lex);
     }
 }
 void const_declaration(PL0Lex * lex) { //A
@@ -304,7 +306,7 @@ void const_declaration(PL0Lex * lex) { //A
 				printf("there must be a number to follow '=' at line %d\n",lex->line_number);
 				pop(taxstack); //pop num
 				pop(taxstack); // pop W
-                pop(taxstack);
+                //pop(taxstack);
                 do{  // like gcc , skip all token until ";"
                     PL0Lex_get_token(lex);
                 }while(lex->last_token_type!=TOKEN_SEMICOLON);
@@ -341,6 +343,7 @@ void H(PL0Lex * lex){ //H
         push(taxstack,15);
         print_stack(taxstack);
         pop(taxstack); //reduce ,
+        PL0Lex_get_token(lex);
         variable_declaration(lex);
     } else{ // H -> ;
         pop(taxstack);
