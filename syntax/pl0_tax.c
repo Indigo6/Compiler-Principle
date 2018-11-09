@@ -132,6 +132,10 @@ void term(PL0Lex * lex) {//xiang,T->YZ
         	if(lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH) {
                 Z(lex);//'Z'
             }
+            else if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS){
+                pop(taxstack);
+                print_stack(taxstack); // pop Z
+            }
 	}
         else{}//some error...
 	return;
