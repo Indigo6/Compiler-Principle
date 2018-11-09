@@ -131,7 +131,6 @@ void term(PL0Lex * lex) {//xiang,T->YZ
         	factor(lex);//'Y'
         	if(lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH) {
                 Z(lex);//'Z'
-                PL0Lex_get_token(lex);
             }
 	}
         else{}//some error...
