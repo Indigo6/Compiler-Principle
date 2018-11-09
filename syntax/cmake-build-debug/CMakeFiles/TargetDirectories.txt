@@ -1,3 +1,0 @@
-/home/zyr/lab1/pl0compiler/syntax/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/zyr/lab1/pl0compiler/syntax/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/zyr/lab1/pl0compiler/syntax/cmake-build-debug/CMakeFiles/tax.dir
