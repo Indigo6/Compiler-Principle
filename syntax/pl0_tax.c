@@ -490,7 +490,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
                        && lex->last_token_type!=TOKEN_IDENTIFIER && lex->last_token_type!=TOKEN_CALL && lex -> last_token_type!=TOKEN_IF&&
                        lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
                 block(lex);
-                PL0Lex_get_token(lex);
+                //PL0Lex_get_token(lex);
                 if(lex->last_token_type==TOKEN_SEMICOLON){
                     pop(taxstack); // reduce ;
                     print_stack(taxstack);
@@ -502,7 +502,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
             }
             else{
                 block(lex);
-                PL0Lex_get_token(lex);
+                //PL0Lex_get_token(lex);
                 if(lex->last_token_type==TOKEN_SEMICOLON){
                     pop(taxstack); // reduce ;
                     print_stack(taxstack);
@@ -529,7 +529,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
                        lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
                 print_stack(taxstack);
                 block(lex);
-                PL0Lex_get_token(lex);
+                //PL0Lex_get_token(lex);
                 if(lex->last_token_type==TOKEN_SEMICOLON){
                     pop(taxstack); // reduce ;
                     print_stack(taxstack);
@@ -542,7 +542,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
             else{
                 print_stack(taxstack);
                 block(lex);
-                PL0Lex_get_token(lex);
+                //PL0Lex_get_token(lex);
                 if(lex->last_token_type==TOKEN_SEMICOLON){
                     pop(taxstack); // reduce ;
                     print_stack(taxstack);
@@ -573,7 +573,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
                    lex->last_token_type!=TOKEN_BEGIN && lex->last_token_type!=TOKEN_WHILE);
             print_stack(taxstack);
             block(lex);
-            PL0Lex_get_token(lex);
+            //PL0Lex_get_token(lex);
             if(lex->last_token_type==TOKEN_SEMICOLON){
                 pop(taxstack); // reduce ;
                 print_stack(taxstack);
@@ -721,6 +721,7 @@ void program_block(PL0Lex * lex) { // P -> B .
     while(PL0Lex_get_token(lex) && (lex->last_token_type!=TOKEN_PERIOD));//Ignore until period(in case illegal stmt)
     if(lex->last_token_type==TOKEN_PERIOD){
         pop(taxstack); // pop .
+        print_stack(taxstack);
         printf("analysis end1");
     }
     else{
@@ -817,6 +818,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
             }
         }
         pop(taxstack);//rm 'end'
+        print_stack(taxstack);
         return;
     }
     else if(lex->last_token_type == TOKEN_IF){//F->if condition then S
