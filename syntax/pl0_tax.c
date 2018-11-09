@@ -104,7 +104,7 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
         push(taxstack,42);//T
         print_stack(taxstack);
 	
-	PL0Lex_get_token(lex);
+	//PL0Lex_get_token(lex);
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	term(lex);//'T'
 		G(lex);//'G'
@@ -126,7 +126,7 @@ void term(PL0Lex * lex) {//xiang,T->YZ
         push(taxstack,48);//Y
         print_stack(taxstack);
 	
-	PL0Lex_get_token(lex);
+	//PL0Lex_get_token(lex);
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	factor(lex);//'Y'
 		Z(lex);//'Z'
