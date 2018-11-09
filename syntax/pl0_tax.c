@@ -78,7 +78,7 @@ void print_stack(stack* s){
 }
 /*functions for syntax analysis*/
 
-void condition(PL0Lex * lex) {//tiaojian
+/*void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
 	if(lex->last_token_type == TOKEN_ODD){//line 1，read odd
 		PL0Lex_get_token(lex);
@@ -94,7 +94,7 @@ void condition(PL0Lex * lex) {//tiaojian
 		}
 		else printf("compare symbols needed!\n");
 	}
-}
+}*/
 
 void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	printf("analysis the expression\n");
@@ -174,7 +174,7 @@ void factor(PL0Lex * lex) {//yinzi
         	push(taxstack,11);//id
         	print_stack(taxstack);
 	}
-	else if(lex->last_token_type == TOKEN_NUM){//Y->num
+	else if(lex->last_token_type == TOKEN_NUMBER){//Y->num
 		pop(taxstack);//rm 'Y'
 		push(taxstack,13);//num
         	print_stack(taxstack);
@@ -903,7 +903,7 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
     }
     else //lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_END)
     {
-        print("Expected ';'.\n");
+        printf("Expected ';'.\n");
         pop(taxstack);//rm ';'
         pop(taxstack);//rm 'S' with epsilon
         print_stack(taxstack);
