@@ -958,8 +958,9 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
             return;
         }
         PL0Lex_get_token(lex);//after do.
-        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER
-            || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
+        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+            || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+            lex->last_token_type == TOKEN_CALL){
             statement(lex);
         }
         else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON
@@ -1019,7 +1020,7 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
         }   
     }
     if(lex->last_token_type == TOKEN_SEMICOLON){
-        print_stack(taxstack);
+        //print_stack(taxstack);
         pop(taxstack);//rm ';'
         print_stack(taxstack);
         statements(lex);//Connote rm of 'S'
