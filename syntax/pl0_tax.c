@@ -126,7 +126,7 @@ void term(PL0Lex * lex) {//xiang,T->YZ
         push(taxstack,48);//Y
         print_stack(taxstack);
 	
-	PL0Lex_get_token(lex);
+	//PL0Lex_get_token(lex);
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	factor(lex);//'Y'
 		Z(lex);//'Z'
@@ -181,9 +181,8 @@ void Z(PL0Lex * lex){
         	push(taxstack,49);//Z
         	push(taxstack,48);//Y
 		push(taxstack,46);//*
-        	print_stack(taxstack);
-
-        	PL0Lex_get_token(lex);
+		print_stack(taxstack);
+		PL0Lex_get_token(lex);
 		if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         		factor(lex);//'Y'
 			Z(lex);//'Z'
@@ -219,31 +218,33 @@ void factor(PL0Lex * lex) {//yinzi
 	printf("analysis the factor\n");
 	if(lex->last_token_type == TOKEN_IDENTIFIER){//Y->id
 		pop(taxstack);//rm 'Y'
-        	push(taxstack,11);//id
-        	print_stack(taxstack);
+		push(taxstack,11);//id
+		print_stack(taxstack);
+		pop(taxstack);//rm 'id'
+		print_stack(taxstack);
 	}
 	else if(lex->last_token_type == TOKEN_NUMBER){//Y->num
 		pop(taxstack);//rm 'Y'
 		push(taxstack,13);//num
-        	print_stack(taxstack);
+		print_stack(taxstack);
 	}
 	else if(lex->last_token_type == TOKEN_MINUS){//Y->-X
 		pop(taxstack);//rm 'Y'
-        	push(taxstack,35);//X
+		push(taxstack,35);//X
 		push(taxstack,45);//-
-        	print_stack(taxstack);
+		print_stack(taxstack);
 		PL0Lex_get_token(lex);
-        	expression(lex);//'X'
+		expression(lex);//'X'
 	}
 	else if(lex->last_token_type == TOKEN_LPAREN){//Y->(X)
 		pop(taxstack);//rm 'Y'
-        	push(taxstack,51);//)
-        	push(taxstack,35);//X
+		push(taxstack,51);//)
+		push(taxstack,35);//X
 		push(taxstack,50);//(
-        	print_stack(taxstack);
+		print_stack(taxstack);
 		PL0Lex_get_token(lex);
-        	expression(lex);//'X'
-        	PL0Lex_get_token(lex);//)
+		expression(lex);//'X'
+		PL0Lex_get_token(lex);//)
 	}
 
 	PL0Lex_get_token(lex);
