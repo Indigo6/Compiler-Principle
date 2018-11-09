@@ -108,7 +108,7 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	term(lex);//'T'
 		G(lex);//'G'
-        	PL0Lex_get_token(lex);
+        	//PL0Lex_get_token(lex);
 		if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || 			lex->last_token_type == TOKEN_GEQ){
 			return;
 		}
@@ -150,8 +150,8 @@ void G(PL0Lex * lex){
         		term(lex);//'T'
             if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS) {
                 G(lex);//'G'
-                PL0Lex_get_token(lex);
             }
+            PL0Lex_get_token(lex);
 			if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ){
 			return;
 			}
@@ -169,8 +169,8 @@ void G(PL0Lex * lex){
         		term(lex);//'T'
             if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS) {
                 G(lex);//'G'
-                PL0Lex_get_token(lex);
             }
+            PL0Lex_get_token(lex);
 			if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ){
 			return;
 			}
@@ -193,8 +193,8 @@ void Z(PL0Lex * lex){
 
             if(lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH) {
                 Z(lex);//'Z'
-                PL0Lex_get_token(lex);
             }
+            PL0Lex_get_token(lex);
 			if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ){
 			return;
 			}
