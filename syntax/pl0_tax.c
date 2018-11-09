@@ -77,9 +77,6 @@ void print_stack(stack* s){
     printf("\n");
 }
 /*functions for syntax analysis*/
-void statement(PL0Lex * lex) {//语句
-	printf("analysis the statement\n");
-}
 
 void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
@@ -99,31 +96,104 @@ void condition(PL0Lex * lex) {//tiaojian
 	}
 }
 
-void expression(PL0Lex * lex) {//表达shi
+void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	printf("analysis the expression\n");
+
+	pop(taxstack);//rm 'X'
+        push(taxstack,43);//G
+        push(taxstack,42);//T
+        print_stack(taxstack);
+        term(lex);//'T'
+        G(lex);//'G'
+            
+        return;
 }
 
-void term(PL0Lex * lex) {//xiang
+void term(PL0Lex * lex) {//xiang,T->YZ
 	printf("analysis the term\n");
+
+	pop(taxstack);//rm 'X'
+        push(taxstack,49);//Z
+        push(taxstack,48);//Y
+        print_stack(taxstack);
+
+        factor(lex);//'Y'
+        Z(lex);//'Z'
+
+	return;
+}
+
+void G(PL0Lex * lex){
+	if(lex->last_token_type == TOKEN_PLUS){//G->+TG
+		pop(taxstack);//rm 'G'
+        	push(taxstack,43);//G
+        	push(taxstack,42);//T
+		push(taxstack,44);//+
+        	print_stack(taxstack);
+        	term(lex);//'T'
+        	G(lex);//'G'
+	}
+	else if(lex->last_token_type == TOKEN_MINUS){//G->-TG
+		pop(taxstack);//rm 'G'
+        	push(taxstack,43);//G
+        	push(taxstack,42);//T
+		push(taxstack,45);//-
+        	print_stack(taxstack);
+        	term(lex);//'T'
+        	G(lex);//'G'
+	}
+	return;
+}
+
+void Z(PL0Lex * lex){
+	if(lex->last_token_type == TOKEN_TIMES){//Z->*YZ
+		pop(taxstack);//rm 'Z'
+        	push(taxstack,49);//Z
+        	push(taxstack,48);//Y
+		push(taxstack,46);//*
+        	print_stack(taxstack);
+        	factor(lex);//'Y'
+        	Z(lex);//'Z'
+	}
+	else if(lex->last_token_type == TOKEN_SLASH){//Z->/YZ
+		pop(taxstack);//rm 'Z'
+        	push(taxstack,49);//Z
+        	push(taxstack,48);//Y
+		push(taxstack,47);///
+        	print_stack(taxstack);
+        	factor(lex);//'Y'
+        	Z(lex);//'Z'
+	}
+	return;
 }
 
 void factor(PL0Lex * lex) {//yinzi
 	printf("analysis the factor\n");
-	if(lex->last_token_type == TOKEN_MINUS){//line 3
-		PL0Lex_get_token(lex);
-		expression(lex);
+	if(lex->last_token_type == TOKEN_IDENTIFIER){//Y->id
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,11);//id
+        	print_stack(taxstack);
 	}
-	else if(lex->last_token_type == TOKEN_LPAREN){//line 4
-		PL0Lex_get_token(lex);
-		expression(lex);
-		PL0Lex_get_token(lex);
-		if(lex->last_token_type != TOKEN_RPAREN) printf("RPAREN ')' needed!\n");
+	else if(lex->last_token_type == TOKEN_NUM){//Y->num
+		pop(taxstack);//rm 'Y'
+		push(taxstack,13);//num
+        	print_stack(taxstack);
 	}
-	else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER){//line 1&2
-		//DO SOMETHING?	
+	else if(lex->last_token_type == TOKEN_MINUS){//Y->-X
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,35);//X
+		push(taxstack,45);//-
+        	print_stack(taxstack);
+        	expression(lex);//'X'
 	}
-	else{
-		printf("illegal factor!\n");	
+	else if(lex->last_token_type == TOKEN_LPAREN){//Y->(X)
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,51);//)
+        	push(taxstack,35);//X
+		push(taxstack,50);//(
+        	print_stack(taxstack);
+        	expression(lex);//'X'
+        	PL0Lex_get_token(lex);//)
 	}
 }
 
