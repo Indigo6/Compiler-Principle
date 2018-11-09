@@ -103,8 +103,8 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	push(taxstack,43);//G
 	push(taxstack,42);//T
 	print_stack(taxstack);
-    pop(taxstack);
-    print_stack(taxstack);
+    //pop(taxstack);
+    //print_stack(taxstack);
 
 
 
@@ -112,12 +112,16 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	    term(lex);//'T'
 	    if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS) G(lex);//'G'
         else if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
-
+            //pop(taxstack);
+            //print_stack(taxstack);
             return;
 		}
 		else printf("X.follow error!\n");
 	}
-	else{}//some error ...    
+	else{
+	    //pop(taxstack);
+	    //print_stack(taxstack);
+	}//some error ...
         return;
 }
 
