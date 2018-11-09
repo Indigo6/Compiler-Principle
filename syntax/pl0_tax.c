@@ -232,7 +232,7 @@ void factor(PL0Lex * lex) {//yinzi
         	push(taxstack,35);//X
 		push(taxstack,45);//-
         	print_stack(taxstack);
-		PL0_Lex_get_token(lex);
+		PL0Lex_get_token(lex);
         	expression(lex);//'X'
 	}
 	else if(lex->last_token_type == TOKEN_LPAREN){//Y->(X)
@@ -241,7 +241,7 @@ void factor(PL0Lex * lex) {//yinzi
         	push(taxstack,35);//X
 		push(taxstack,50);//(
         	print_stack(taxstack);
-		PL0_Lex_get_token(lex);
+		PL0Lex_get_token(lex);
         	expression(lex);//'X'
         	PL0Lex_get_token(lex);//)
 	}
