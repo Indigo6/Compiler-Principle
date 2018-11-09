@@ -757,7 +757,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         }
         return; 
     }
-    else if(lex->last_token_type == TOKEN_CALL){
+    else if(lex->last_token_type == TOKEN_CALL){//F->call id
         pop(taxstack);
         push(taxstack,11);
         push(taxstack,26);
@@ -783,7 +783,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         pop(taxstack);// rm 'id'
         return;
     }
-    else if(lex->last_token_type == TOKEN_BEGIN){
+    else if(lex->last_token_type == TOKEN_BEGIN){//F->begin S end
         pop(taxstack);
         push(taxstack,28);
         push(taxstack,4);
@@ -807,7 +807,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         pop(taxstack);//rm 'end'
         return;
     }
-    else if(lex->last_token_type == TOKEN_IF){
+    else if(lex->last_token_type == TOKEN_IF){//F->if condition then S
         pop(taxstack);
         push(taxstack,23);
         push(taxstack,31);
@@ -893,7 +893,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         // Above three branch all end in ';' or ',',so return together.
         return;
     }
-    else if(lex->last_token_type == TOKEN_WHILE){
+    else if(lex->last_token_type == TOKEN_WHILE){//F->while condition do S
         pop(taxstack);
         push(taxstack,23);
         push(taxstack,33);
@@ -1004,7 +1004,7 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
         }
         else{
             printf("Illegal statement in 'statements'.\n");
-            while(1){ //One illegal statement
+            while(1){ //One illegal statement,ignore until ';'
                 PL0Lex_get_token(lex);
                 if(lex->last_token_type == TOKEN_SEMICOLON){
                     PL0Lex_get_token(lex);
@@ -1012,7 +1012,8 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
                 }
                 else if(lex->last_token_type == TOKEN_END || lex->last_token_type == TOKEN_PERIOD){
                     pop(taxstack);//rm 'F'
-                    pop(taxstack);//rm 'M'
+                    pop(taxstack);//rm ';'
+                    pop(taxstack);//rm 'S'
                     print_stack(taxstack);
                     return;
                 }
