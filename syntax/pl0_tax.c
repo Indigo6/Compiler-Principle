@@ -254,7 +254,7 @@ void const_declaration(PL0Lex * lex) { //A
 				printf("there must be a number to follow '=' at line %d\n",lex->line_number);
 				pop(taxstack); //pop num
 				pop(taxstack); // pop W
-                pop(taxstack);
+                //pop(taxstack);
                 do{  // like gcc , skip all token until ";"
                     PL0Lex_get_token(lex);
                 }while(lex->last_token_type!=TOKEN_SEMICOLON);
