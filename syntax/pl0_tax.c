@@ -423,7 +423,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
                 }
             }
             else{
-               block(lex);
+                block(lex);
                 PL0Lex_get_token(lex);
                 if(lex->last_token_type==TOKEN_SEMICOLON){
                     pop(taxstack); // reduce ;
@@ -508,7 +508,7 @@ void procedure_declaration(PL0Lex* lex){ // procedure id ; B ;
         else{
             print_stack(taxstack);
             block(lex);
-            PL0Lex_get_token(lex);
+            //PL0Lex_get_token(lex);
             if(lex->last_token_type==TOKEN_SEMICOLON){
                 pop(taxstack); // reduce ;
                 print_stack(taxstack);
