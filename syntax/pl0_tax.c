@@ -215,7 +215,7 @@ void W(PL0Lex* lex){
         print_stack(taxstack);
         pop(taxstack); //pop ;， reduce ;
         print_stack(taxstack);
-        PL0Lex_get_token(lex);
+        //PL0Lex_get_token(lex);
     }
 }
 void const_declaration(PL0Lex * lex) { //A
