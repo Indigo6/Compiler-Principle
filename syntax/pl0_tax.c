@@ -77,9 +77,6 @@ void print_stack(stack* s){
     printf("\n");
 }
 /*functions for syntax analysis*/
-void statement(PL0Lex * lex) {//语句
-	printf("analysis the statement\n");
-}
 
 void condition(PL0Lex * lex) {//tiaojian
 	printf("analysis the condition expression\n");
@@ -99,31 +96,104 @@ void condition(PL0Lex * lex) {//tiaojian
 	}
 }
 
-void expression(PL0Lex * lex) {//表达shi
+void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	printf("analysis the expression\n");
+
+	pop(taxstack);//rm 'X'
+        push(taxstack,43);//G
+        push(taxstack,42);//T
+        print_stack(taxstack);
+        term(lex);//'T'
+        G(lex);//'G'
+            
+        return;
 }
 
-void term(PL0Lex * lex) {//xiang
+void term(PL0Lex * lex) {//xiang,T->YZ
 	printf("analysis the term\n");
+
+	pop(taxstack);//rm 'X'
+        push(taxstack,49);//Z
+        push(taxstack,48);//Y
+        print_stack(taxstack);
+
+        factor(lex);//'Y'
+        Z(lex);//'Z'
+
+	return;
+}
+
+void G(PL0Lex * lex){
+	if(lex->last_token_type == TOKEN_PLUS){//G->+TG
+		pop(taxstack);//rm 'G'
+        	push(taxstack,43);//G
+        	push(taxstack,42);//T
+		push(taxstack,44);//+
+        	print_stack(taxstack);
+        	term(lex);//'T'
+        	G(lex);//'G'
+	}
+	else if(lex->last_token_type == TOKEN_MINUS){//G->-TG
+		pop(taxstack);//rm 'G'
+        	push(taxstack,43);//G
+        	push(taxstack,42);//T
+		push(taxstack,45);//-
+        	print_stack(taxstack);
+        	term(lex);//'T'
+        	G(lex);//'G'
+	}
+	return;
+}
+
+void Z(PL0Lex * lex){
+	if(lex->last_token_type == TOKEN_TIMES){//Z->*YZ
+		pop(taxstack);//rm 'Z'
+        	push(taxstack,49);//Z
+        	push(taxstack,48);//Y
+		push(taxstack,46);//*
+        	print_stack(taxstack);
+        	factor(lex);//'Y'
+        	Z(lex);//'Z'
+	}
+	else if(lex->last_token_type == TOKEN_SLASH){//Z->/YZ
+		pop(taxstack);//rm 'Z'
+        	push(taxstack,49);//Z
+        	push(taxstack,48);//Y
+		push(taxstack,47);///
+        	print_stack(taxstack);
+        	factor(lex);//'Y'
+        	Z(lex);//'Z'
+	}
+	return;
 }
 
 void factor(PL0Lex * lex) {//yinzi
 	printf("analysis the factor\n");
-	if(lex->last_token_type == TOKEN_MINUS){//line 3
-		PL0Lex_get_token(lex);
-		expression(lex);
+	if(lex->last_token_type == TOKEN_IDENTIFIER){//Y->id
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,11);//id
+        	print_stack(taxstack);
 	}
-	else if(lex->last_token_type == TOKEN_LPAREN){//line 4
-		PL0Lex_get_token(lex);
-		expression(lex);
-		PL0Lex_get_token(lex);
-		if(lex->last_token_type != TOKEN_RPAREN) printf("RPAREN ')' needed!\n");
+	else if(lex->last_token_type == TOKEN_NUM){//Y->num
+		pop(taxstack);//rm 'Y'
+		push(taxstack,13);//num
+        	print_stack(taxstack);
 	}
-	else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER){//line 1&2
-		//DO SOMETHING?	
+	else if(lex->last_token_type == TOKEN_MINUS){//Y->-X
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,35);//X
+		push(taxstack,45);//-
+        	print_stack(taxstack);
+        	expression(lex);//'X'
 	}
-	else{
-		printf("illegal factor!\n");	
+	else if(lex->last_token_type == TOKEN_LPAREN){//Y->(X)
+		pop(taxstack);//rm 'Y'
+        	push(taxstack,51);//)
+        	push(taxstack,35);//X
+		push(taxstack,50);//(
+        	print_stack(taxstack);
+        	expression(lex);//'X'
+        	PL0Lex_get_token(lex);//)
 	}
 }
 
@@ -468,6 +538,24 @@ void block(PL0Lex *lex){ // B
     // || lex->last_token_type == TOKEN_VAR || lex->last_token_type == TOKEN_PROCEDURE);
 
     // !!!------  F should be written below here ------ !!!
+    if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+        || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+        lex->last_token_type == TOKEN_CALL){
+            statement(lex);
+    }
+    else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON){
+        printf("Warning: block without statement.\n");//No legal statement after declaration
+    }
+    else{
+        printf("Illegal statement.\n");//No legal statement after declaration
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type != TOKEN_PERIOD && lex->last_token_type != TOKEN_SEMICOLON){
+            printf("Excess element after 'call'.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                lex->last_token_type == TOKEN_SEMICOLON));//Ignore until Follow of F, ';' or '.'
+        }
+    }
+    return;
 }
 void program_block(PL0Lex * lex) { // P -> B .
     taxstack = (stack*)malloc(sizeof(stack));
@@ -496,7 +584,8 @@ void program_block(PL0Lex * lex) { // P -> B .
     push(taxstack,1); //push B
     print_stack(taxstack);
     block(lex); //B
-    PL0Lex_get_token(lex);
+    //PL0Lex_get_token(lex);
+    while(PL0Lex_get_token(lex) && (lex->last_token_type!=TOKEN_PERIOD));//Ignore until period(in case illegal stmt)
     if(lex->last_token_type==TOKEN_PERIOD){
         pop(taxstack); // pop .
         printf("analysis end1");
@@ -506,3 +595,527 @@ void program_block(PL0Lex * lex) { // P -> B .
     }
 destroystack(taxstack);
 } //program_block
+
+void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 'FOLLOW' of F
+    if(lex->last_token_type == TOKEN_IDENTIFIER){// F-> id := X;
+        pop(taxstack);
+        push(taxstack,35);
+        push(taxstack,25);
+        push(taxstack,11);
+        print_stack(taxstack);
+        pop(taxstack);//rm 'id'
+        print_stack(taxstack);
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type != TOKEN_BECOMES){
+            printf("Expected ':=' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            pop(taxstack);
+            return;
+        }
+        pop(taxstack);//rm ':='
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER
+            || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
+            expression(lex); //expression must return with ';' or '.'
+        }
+        else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON
+            || lex->last_token_type==TOKEN_END){
+            printf("'become' statement without expression.\n");
+            pop(taxstack);//rm 'X'
+        }
+        else{
+            printf("'become' statement with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);//rm 'X'
+        }
+        return; 
+    }
+    else if(lex->last_token_type == TOKEN_CALL){
+        pop(taxstack);
+        push(taxstack,11);
+        push(taxstack,26);
+        print_stack(taxstack);
+        pop(taxstack); // rm 'call'
+        print_stack(taxstack);
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type != TOKEN_IDENTIFIER){
+            printf("Expected identifier at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+        }
+        else{// Process when to return
+            PL0Lex_get_token(lex);
+            if(lex->last_token_type != TOKEN_PERIOD && lex->last_token_type != TOKEN_SEMICOLON){
+                printf("Expected ';' or '.'.\n");
+                while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            }
+        }
+        pop(taxstack);// rm 'id'
+        return;
+    }
+    else if(lex->last_token_type == TOKEN_BEGIN){
+        pop(taxstack);
+        push(taxstack,28);
+        push(taxstack,4);
+        push(taxstack,27);
+        print_stack(taxstack);
+        pop(taxstack);//rm 'begin'
+        print_stack(taxstack);
+        statements(lex);//Anyway go to statements, because there may be legal stmt after il-stmt in stmts
+        //PL0Lex_get_token(lex);
+        if(lex->last_token_type != TOKEN_END) // stmts reutrn because of '.'
+            printf("Expected 'end' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
+        else{//stmts reutrn because of 'end'
+            PL0Lex_get_token(lex);
+            if(lex->last_token_type != TOKEN_PERIOD && lex->last_token_type != TOKEN_SEMICOLON){
+                printf("Expected ';' or '.'.\n");
+                while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            }
+        }
+        pop(taxstack);//rm 'end'
+        return;
+    }
+    else if(lex->last_token_type == TOKEN_IF){
+        pop(taxstack);
+        push(taxstack,23);
+        push(taxstack,31);
+        push(taxstack,30);
+        push(taxstack,29);
+        print_stack(taxstack);
+        pop(taxstack);//rm 'if'
+        print_stack(taxstack);
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_ODD || lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+                condition(lex);
+        }
+        else if(lex->last_token_type == TOKEN_THEN){
+            printf("'if' expression without 'condition'.\n");
+            pop(taxstack);//rm 'O'
+            print_stack(taxstack);
+        }
+        else if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
+            || lex->last_token_type == TOKEN_END){
+            printf("'if' without 'condition','then'&'statement'.\n");
+            pop(taxstack);
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        else{
+            printf("'if' with illegal 'condition'.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
+            ||lex->last_token_type == TOKEN_END){
+            // condition reutrn because of ';' or '.' or 'end'
+            printf("'if' expression without 'then'.\n");
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }           
+        else if(lex->last_token_type == TOKEN_THEN){
+            // condition reutrn because of 'then', or 'then' after 'if'
+            pop(taxstack);
+            print_stack(taxstack);
+        }    
+        else{//condition return with 'do'
+            printf("Expected 'then' not 'do' at %d:%d,line:%d\n",lex->start,lex->end,lex->line_number);
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        PL0Lex_get_token(lex);//after then
+        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER
+            || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
+            statement(lex);
+        }
+        else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON
+            || lex->last_token_type ==TOKEN_END){
+            printf("'if'  without statement.\n");
+            pop(taxstack);
+            print_stack(taxstack);
+        }
+        else{
+            printf("'if' with illegal statement.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            print_stack(taxstack);
+        }
+        // Above three branch all end in ';' or ',',so return together.
+        return;
+    }
+    else if(lex->last_token_type == TOKEN_WHILE){
+        pop(taxstack);
+        push(taxstack,23);
+        push(taxstack,33);
+        push(taxstack,30);
+        push(taxstack,32);
+        print_stack(taxstack);
+        pop(taxstack);//rm 'while'
+        print_stack(taxstack);
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_ODD || lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+                condition(lex);
+        }
+        else if(lex->last_token_type == TOKEN_DO){
+            printf("'while' expression without 'condition'.\n");
+            pop(taxstack);//rm 'O'
+            print_stack(taxstack);
+        }
+        else if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
+            || lex->last_token_type == TOKEN_END){
+            printf("'while' without 'condition','do'&'statement'.\n");
+            pop(taxstack);
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        else{
+            printf("'while' with illegal 'condition'.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
+            ||lex->last_token_type == TOKEN_END){
+            // condition reutrn because of ';' or '.'
+            printf("'if' expression without 'do'.\n");
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }           
+        else if(lex->last_token_type == TOKEN_DO){
+            // condition reutrn because of 'do', or 'do' after 'while'
+            pop(taxstack);
+            print_stack(taxstack);
+        }    
+        else{//condition return with 'then'
+            printf("Expected 'do' not 'then' at %d:%d,line:%d\n",lex->start,lex->end,lex->line_number);
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            pop(taxstack);
+            print_stack(taxstack);
+            return;
+        }
+        PL0Lex_get_token(lex);//after do.
+        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER
+            || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
+            statement(lex);
+        }
+        else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON
+            ||lex->last_token_type == TOKEN_END){
+            printf("'while' without statement.\n");
+            pop(taxstack);
+            print_stack(taxstack);
+        }
+        else{
+            printf("'while' statement with illegal statement.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+                    //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            print_stack(taxstack);
+        }
+        // Above three branch all end in ';' or ',',so return together.
+        return;
+    }
+    return;
+}
+
+void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
+    PL0Lex_get_token(lex);
+    if(lex->last_token_type == TOKEN_END || lex->last_token_type == TOKEN_PERIOD){
+        pop(taxstack);//rm 'S'
+        print_stack(taxstack);
+        return;
+    }
+    pop(taxstack);
+    push(taxstack,4);
+    push(taxstack,10);
+    push(taxstack,23);
+    print_stack(taxstack);
+    while(1){// Until end or find one legal statement
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+            || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+            lex->last_token_type == TOKEN_CALL){
+            statement(lex);//Connote rm of 'F'
+            break;
+        }
+        else{
+            printf("Illegal statement in 'statements'.\n");
+            while(1){ //One illegal statement
+                PL0Lex_get_token(lex);
+                if(lex->last_token_type == TOKEN_SEMICOLON)
+                    break;
+                else if(lex->last_token_type == TOKEN_END || lex->last_token_type == TOKEN_PERIOD){
+                    pop(taxstack);//rm 'F'
+                    pop(taxstack);//rm 'M'
+                    print_stack(taxstack);
+                    return;
+                }
+            }
+        }   
+    }
+    if(lex->last_token_type == TOKEN_SEMICOLON){
+        pop(taxstack);//rm ';'
+        print_stack(taxstack);
+        statements(lex);//Connote rm of 'S'
+        return;
+    }
+    else //lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_END)
+    {
+        print("Expected ';'.\n");
+        pop(taxstack);//rm ';'
+        pop(taxstack);//rm 'S' with epsilon
+        print_stack(taxstack);
+        return;
+    }
+}
+void condition(PL0Lex * lex){ //analysis the condition statement 'O(spell 'eu')'
+    if(lex->last_token_type == TOKEN_ODD){
+        pop(taxstack);//rm 'O'
+        push(taxstack,35);
+        push(taxstack,34);
+        print_stack(taxstack);
+        pop(taxstack);
+        print_stack(taxstack);//rm 'odd'
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("'condition' with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+        return;
+    }
+    else{// O->XQ
+        pop(taxstack);//rm 'O'
+        push(taxstack,36);
+        push(taxstack,35);
+        print_stack(taxstack);
+        expression(lex);//Connote rm of 'X'
+        if(lex->last_token_type==TOKEN_PERIOD||lex->last_token_type == TOKEN_SEMICOLON
+            || lex->last_token_type==TOKEN_END || lex->last_token_type == TOKEN_THEN 
+            || lex->last_token_type == TOKEN_DO){
+            printf("Warning: condition with only single expression.\n");
+            pop(taxstack);
+            print_stack(taxstack);//rm 'Q' with epsilon
+            return;
+        }
+        else if(lex->last_token_type==TOKEN_EQU||lex->last_token_type == TOKEN_NEQ
+            || lex->last_token_type==TOKEN_LES || lex->last_token_type == TOKEN_LEQ 
+            || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ)
+        {
+            Q(lex);//connote rm of 'Q'
+            if(lex->last_token_type==TOKEN_EQU||lex->last_token_type == TOKEN_NEQ
+            || lex->last_token_type==TOKEN_LES || lex->last_token_type == TOKEN_LEQ 
+            || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ)
+            {
+                printf("Too much logic operation ofr one condition!\n");
+                while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                        lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                        lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                        //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            }
+        }
+        else{
+            printf("Illegal logic operation.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'Q'
+            print_stack(taxstack);
+        }
+        return;
+    }
+}
+void Q(PL0Lex* lex){ //Q 消除左递归
+    if(lex->last_token_type == TOKEN_EQU){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,12);
+        print_stack(taxstack);
+        pop(taxstack);//rm '='
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+    if(lex->last_token_type == TOKEN_NEQ){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,37);
+        print_stack(taxstack);
+        pop(taxstack);//rm '!='
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+    if(lex->last_token_type == TOKEN_LEQ){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,38);
+        print_stack(taxstack);
+        pop(taxstack);//rm '<='
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+    if(lex->last_token_type == TOKEN_GEQ){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,39);
+        print_stack(taxstack);
+        pop(taxstack);//rm '>='
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+    if(lex->last_token_type == TOKEN_LES){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,40);
+        print_stack(taxstack);
+        pop(taxstack);//rm '<'
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+    if(lex->last_token_type == TOKEN_GTR){
+        pop(taxstack);//rm 'Q'
+        push(taxstack,35);
+        push(taxstack,41);
+        print_stack(taxstack);
+        pop(taxstack);//rm '>'
+        PL0Lex_get_token(lex);
+        if(lex->last_token_type == TOKEN_IDENTIFIER || 
+            lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || 
+            lex->last_token_type == TOKEN_LPAREN){
+            expression(lex);
+        }
+        else{
+            printf("Q:'logic operation' + 'expression', with illegal expression.\n");
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                    lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END||
+                    lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO));
+                    //Ignore until Follow of F, ';' or '.' or 'end' or 'then' or 'do'.
+            pop(taxstack);//rm 'X'
+            print_stack(taxstack);
+            return;
+        }
+    }
+}
+
