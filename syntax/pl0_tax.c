@@ -133,26 +133,29 @@ void term(PL0Lex * lex) {//xiang,T->YZ
 	push(taxstack,49);//Z
 	push(taxstack,48);//Y
 	print_stack(taxstack);
-	pop(taxstack);
-	print_stack(taxstack);
+
 
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	factor(lex);//'Y'
         	if(lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH) {
                 Z(lex);//'Z'
             }
-            else  if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS 
-                || lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ 
-                || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ 
-                || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ 
-                || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD 
-                || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO 
-                || lex->last_token_type == TOKEN_RPAREN)
-            {
-                return;
-            }
 	}
-	else{}//some error...
+	else{
+
+	}//some error...
+    if(lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS
+       || lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ
+       || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ
+       || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ
+       || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD
+       || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO
+       || lex->last_token_type == TOKEN_RPAREN)
+    {
+        pop(taxstack);
+        print_stack(taxstack);
+        return;
+    }
 	return;
 }
 
@@ -259,8 +262,8 @@ void Z(PL0Lex * lex){
 		}
 	}
 	else{
-        pop(taxstack);
-        print_stack(taxstack);
+        //pop(taxstack);
+        //print_stack(taxstack);
 	}
 	return;
 }
