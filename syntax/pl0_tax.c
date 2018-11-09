@@ -121,7 +121,7 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 void term(PL0Lex * lex) {//xiang,T->YZ
 	printf("analysis the term\n");
 
-	pop(taxstack);//rm 'X'
+	pop(taxstack);//rm T
         push(taxstack,49);//Z
         push(taxstack,48);//Y
         print_stack(taxstack);
@@ -652,7 +652,7 @@ destroystack(taxstack);
 } //program_block
 
 void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 'FOLLOW' of F
-    if(lex->last_token_type == TOKEN_IDENTIFIER){// F-> id := X;
+    if(lex->last_token_type == TOKEN_IDENTIFIER){// F-> id := X
         pop(taxstack);
         push(taxstack,35);//X
         push(taxstack,25);//:=
