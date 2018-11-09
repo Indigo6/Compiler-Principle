@@ -928,7 +928,6 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
     push(taxstack,23);
     print_stack(taxstack);
     while(1){// Until end or find one legal statement
-        PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
             || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
             lex->last_token_type == TOKEN_CALL){
@@ -939,8 +938,10 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
             printf("Illegal statement in 'statements'.\n");
             while(1){ //One illegal statement
                 PL0Lex_get_token(lex);
-                if(lex->last_token_type == TOKEN_SEMICOLON)
+                if(lex->last_token_type == TOKEN_SEMICOLON){
+                    PL0Lex_get_token(lex);
                     break;
+                }
                 else if(lex->last_token_type == TOKEN_END || lex->last_token_type == TOKEN_PERIOD){
                     pop(taxstack);//rm 'F'
                     pop(taxstack);//rm 'M'

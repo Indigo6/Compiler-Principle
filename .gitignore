@@ -3,3 +3,4 @@ build/*
 cmake-build-debug/*
 .idea/*
 examples/mytest.txt
+examples/emm.txt
