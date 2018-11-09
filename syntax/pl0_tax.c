@@ -209,7 +209,8 @@ void Z(PL0Lex * lex){
 		push(taxstack,48);//Y
 		push(taxstack,46);//*
 		print_stack(taxstack);
-
+        pop(taxstack);
+        print_stack(taxstack);
 
 		PL0Lex_get_token(lex);
 		if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
@@ -220,8 +221,6 @@ void Z(PL0Lex * lex){
             }
 
             if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
-                pop(taxstack);
-                print_stack(taxstack);
                 return;
             }
 			else printf("Z.follow error!\n");
@@ -233,7 +232,8 @@ void Z(PL0Lex * lex){
         push(taxstack,48);//Y
         push(taxstack,46);//*
         print_stack(taxstack);
-
+        pop(taxstack);
+        print_stack(taxstack);
 
         PL0Lex_get_token(lex);
 		if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
@@ -242,12 +242,15 @@ void Z(PL0Lex * lex){
                 Z(lex);//'Z'
             }
             if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
-                pop(taxstack);
-                print_stack(taxstack);
+
                 return;
 			}
 			else printf("Z.follow error!\n");
 		}
+	}
+	else{
+        pop(taxstack);
+        print_stack(taxstack);
 	}
 	return;
 }
@@ -258,10 +261,11 @@ void factor(PL0Lex * lex) {//yinzi
 		pop(taxstack);//rm 'Y'
 		push(taxstack,11);//id
 		print_stack(taxstack);
-		pop(taxstack);//rm 'id'
-		print_stack(taxstack);
+
 		PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            pop(taxstack);//rm 'id'
+            print_stack(taxstack);
             return;
         } else printf("Y.FOLLOW.ERROR\n");
 	}
@@ -269,10 +273,11 @@ void factor(PL0Lex * lex) {//yinzi
 		pop(taxstack);//rm 'Y'
 		push(taxstack,13);//num
 		print_stack(taxstack);
-		pop(taxstack);
-		print_stack(taxstack);
+
 		PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            pop(taxstack);
+            print_stack(taxstack);
             return;
         } else printf("Y.FOLLOW.ERROR\n");
 	}
@@ -281,14 +286,15 @@ void factor(PL0Lex * lex) {//yinzi
 		push(taxstack,35);//X
 		push(taxstack,45);//-
 		print_stack(taxstack);
-		pop(taxstack);
-		print_stack(taxstack);
+
 		PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN) {
             expression(lex);//'X'
         }
         else{}
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            pop(taxstack);
+            print_stack(taxstack);
             return;
         } else printf("Y.FOLLOW.ERROR\n");
 	}
@@ -298,8 +304,7 @@ void factor(PL0Lex * lex) {//yinzi
 		push(taxstack,35);//X
 		push(taxstack,50);//(
 		print_stack(taxstack);
-		pop(taxstack);
-		print_stack(taxstack);
+
 
 		PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN) {
@@ -308,6 +313,8 @@ void factor(PL0Lex * lex) {//yinzi
         else{}
 		PL0Lex_get_token(lex);//)
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            pop(taxstack);
+            print_stack(taxstack);
             return;
         } else printf("Y.FOLLOW.ERROR\n");
 	}
