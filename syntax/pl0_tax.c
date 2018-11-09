@@ -291,6 +291,7 @@ void H(PL0Lex * lex){ //H
         push(taxstack,15);
         print_stack(taxstack);
         pop(taxstack); //reduce ,
+        PL0Lex_get_token(lex);
         variable_declaration(lex);
     } else{ // H -> ;
         pop(taxstack);
