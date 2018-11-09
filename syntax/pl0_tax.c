@@ -127,8 +127,8 @@ void term(PL0Lex * lex) {//xiang,T->YZ
 	push(taxstack,49);//Z
 	push(taxstack,48);//Y
 	print_stack(taxstack);
-	//pop(taxstack);
-	//print_stack(taxstack);
+	pop(taxstack);
+	print_stack(taxstack);
 
 	if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
         	factor(lex);//'Y'
@@ -143,8 +143,7 @@ void term(PL0Lex * lex) {//xiang,T->YZ
                 || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO 
                 || lex->last_token_type == TOKEN_RPAREN)
             {
-                pop(taxstack);
-                print_stack(taxstack); // pop Z
+                return;
             }
 	}
 	else{}//some error...
