@@ -78,24 +78,6 @@ void print_stack(stack* s){
 }
 /*functions for syntax analysis*/
 
-/*void condition(PL0Lex * lex) {//tiaojian
-	printf("analysis the condition expression\n");
-	if(lex->last_token_type == TOKEN_ODD){//line 1，read odd
-		PL0Lex_get_token(lex);
-		expression(lex);
-	}
-	else{//line 2， read expression
-		PL0Lex_get_token(lex);
-		expression(lex);
-		PL0Lex_get_token(lex);
-		if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ){
-			PL0Lex_get_token(lex);
-			expression(lex);
-		}
-		else printf("compare symbols needed!\n");
-	}
-}*/
-
 void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	//printf("analysis the expression\n");
 
@@ -103,8 +85,6 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	push(taxstack,43);//G
 	push(taxstack,42);//T
 	print_stack(taxstack);
-    //pop(taxstack);
-    //print_stack(taxstack);
 
 
 
@@ -233,7 +213,7 @@ void Z(PL0Lex * lex){
                 Z(lex);//'Z'
             }
 
-            if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_RPAREN || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS ||  lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
                 return;
             }
 			else printf("Z.follow error!\n");
@@ -254,7 +234,7 @@ void Z(PL0Lex * lex){
             if(lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH) {
                 Z(lex);//'Z'
             }
-            if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+            if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_RPAREN || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS ||  lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
 
                 return;
 			}
@@ -317,6 +297,8 @@ void factor(PL0Lex * lex) {//yinzi
 		push(taxstack,35);//X
 		push(taxstack,50);//(
 		print_stack(taxstack);
+		pop(taxstack);
+		print_stack(taxstack);
 
 
 		PL0Lex_get_token(lex);
@@ -324,6 +306,7 @@ void factor(PL0Lex * lex) {//yinzi
             expression(lex);//'X'
         }
         else{}
+
 		PL0Lex_get_token(lex);//)
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
             pop(taxstack);

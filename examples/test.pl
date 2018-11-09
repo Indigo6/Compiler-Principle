@@ -4,7 +4,7 @@ var x, y, z, q, r;
 procedure multiply;
 var a, b;
 begin
-	a := x; b := y; z := 0;
+	a := (x + y / z); b := y * q + z; z := 0;
 	while b > 0 do
 	begin
 		if odd b then z := z + a;
