@@ -935,10 +935,10 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
         print_stack(taxstack);
         return;
     }
-    pop(taxstack);
-    push(taxstack,4);
-    push(taxstack,10);
-    push(taxstack,23);
+    pop(taxstack);//rm 'S'
+    push(taxstack,4);//add 'S'
+    push(taxstack,10);//add ';'
+    push(taxstack,23);//add 'F'
     print_stack(taxstack);
     while(1){// Until end or find one legal statement
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
@@ -965,6 +965,7 @@ void statements(PL0Lex* lex){ // S 语句序列,S->F;S| EPSILON
         }   
     }
     if(lex->last_token_type == TOKEN_SEMICOLON){
+        print_stack(taxstack);
         pop(taxstack);//rm ';'
         print_stack(taxstack);
         statements(lex);//Connote rm of 'S'
