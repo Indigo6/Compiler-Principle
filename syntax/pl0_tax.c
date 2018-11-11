@@ -1243,7 +1243,9 @@ void condition(PL0Lex * lex){ //analysis the condition statement 'O(spell 'eu')'
         expression(lex);//Connote rm of 'X'
         if(lex->last_token_type==TOKEN_PERIOD||lex->last_token_type == TOKEN_SEMICOLON
             || lex->last_token_type==TOKEN_END || lex->last_token_type == TOKEN_THEN 
-            || lex->last_token_type == TOKEN_DO){
+            || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_CALL
+            || lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+            || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE){
             printf("Warning: condition with only single expression.\n");
             pop(taxstack);
             print_stack(taxstack);//rm 'Q' with epsilon
