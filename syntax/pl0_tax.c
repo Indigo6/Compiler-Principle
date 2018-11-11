@@ -982,22 +982,24 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
             lex->last_token_type == TOKEN_LPAREN){
                 condition(lex);
         }
-        else if(lex->last_token_type == TOKEN_THEN){
-            printf("'if' expression without 'condition'.\n");
-            pop(taxstack);//rm 'O'
-            print_stack(taxstack);
-        }
         else if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
             || lex->last_token_type == TOKEN_END){
-            printf("'if' without 'condition','then'&'statement'.\n");
+            printf("missing 'condition'&'then'&'statement' after 'if',line:%d.\n",lex->line_number);
             pop(taxstack);
             pop(taxstack);
             pop(taxstack);
             print_stack(taxstack);
             return;
         }
+        else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+                || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+                lex->last_token_type == TOKEN_CALL || lex->last_token_type == TOKEN_THEN){
+            printf("missing 'condition' after 'if',line:%d.\n",lex->line_number);
+            pop(taxstack);//rm 'condition'
+            print_stack(taxstack);
+        }
         else{
-            printf("'if' with illegal 'condition'.\n");
+            printf("missing 'condition' after 'if',line:%d.\n",lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                     lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
                     //Ignore until Follow of F, ';' or '.' or 'end'.
@@ -1010,7 +1012,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
             ||lex->last_token_type == TOKEN_END){
             // condition reutrn because of ';' or '.' or 'end'
-            printf("'if' expression without 'then'.\n");
+            printf("'if' expression without 'then'&'statement',line:%d.\n",lex->line_number);
             pop(taxstack);
             pop(taxstack);
             print_stack(taxstack);
@@ -1020,18 +1022,26 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
             // condition reutrn because of 'then', or 'then' after 'if'
             pop(taxstack);
             print_stack(taxstack);
-        }    
+            PL0Lex_get_token(lex);
+        }
+        else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+                || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+                lex->last_token_type == TOKEN_CALL){
+            printf("'if' expression without 'then',line:%d.\n",lex->line_number);
+            pop(taxstack);//rm 'then'
+            print_stack(taxstack);
+        }
         else{//condition return with 'do'
             printf("Expected 'then' not 'do' at %d:%d,line:%d\n",lex->start,lex->end,lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                     lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
                     //Ignore until Follow of F, ';' or '.' or 'end'.
-            pop(taxstack);
-            pop(taxstack);
+            pop(taxstack);//rm 'then'
             print_stack(taxstack);
-            return;
-        }
-        PL0Lex_get_token(lex);//after then
+            PL0Lex_get_token(lex);
+            //pop(taxstack);
+            //return;
+        }//after then
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER
             || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN){
             statement(lex);
@@ -1068,22 +1078,24 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
             lex->last_token_type == TOKEN_LPAREN){
                 condition(lex);
         }
-        else if(lex->last_token_type == TOKEN_DO){
-            printf("'while' expression without 'condition'.\n");
-            pop(taxstack);//rm 'O'
-            print_stack(taxstack);
-        }
         else if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
             || lex->last_token_type == TOKEN_END){
-            printf("'while' without 'condition','do'&'statement'.\n");
+            printf("missing 'condition'&'do'&'statement' after 'while',line:%d.\n",lex->line_number);
             pop(taxstack);
             pop(taxstack);
             pop(taxstack);
             print_stack(taxstack);
             return;
         }
+        else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+                || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+                lex->last_token_type == TOKEN_CALL || lex->last_token_type == TOKEN_DO){
+            printf("missing 'condition' after 'while',line:%d.\n",lex->line_number);
+            pop(taxstack);//rm 'condition'
+            print_stack(taxstack);
+        }
         else{
-            printf("'while' with illegal 'condition'.\n");
+            printf("missing 'condition' after 'while',line:%d.\n",lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                     lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
                     //Ignore until Follow of F, ';' or '.' or 'end'.
@@ -1095,29 +1107,38 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         }
         if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
             ||lex->last_token_type == TOKEN_END){
-            // condition reutrn because of ';' or '.'
-            printf("'if' expression without 'then'.\n");
-            pop(taxstack);
-            pop(taxstack);
+            // condition reutrn because of ';' or '.', or the following of 'while' is ';' or ','
+            printf("'while' statement without 'do'&'statement',line:%d.\n",lex->line_number);
+            pop(taxstack);//rm 'do'
+            pop(taxstack);//rm 'X'
             print_stack(taxstack);
             return;
         }           
         else if(lex->last_token_type == TOKEN_DO){
             // condition reutrn because of 'do', or 'do' after 'while'
-            pop(taxstack);
+            pop(taxstack);// rm 'do'
             print_stack(taxstack);
-        }    
+            PL0Lex_get_token(lex);
+        }
+        else if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+                || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
+                lex->last_token_type == TOKEN_CALL)
+        {//return with FIRST of 'X', or FIRST of 'X' after 'while'
+            printf("'while' statement without 'do',line:%d.\n",lex->line_number);
+            pop(taxstack);//rm 'do'
+            print_stack(taxstack);
+        }
         else{//condition return with 'then'
-            printf("Expected 'do' not 'then' at %d:%d,line:%d\n",lex->start,lex->end,lex->line_number);
+            printf("Expected 'do' not 'then',line:%d\n",lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                     lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
                     //Ignore until Follow of F, ';' or '.' or 'end'.
             pop(taxstack);
-            pop(taxstack);
+            //pop(taxstack);
             print_stack(taxstack);
-            return;
-        }
-        PL0Lex_get_token(lex);//after do.
+            PL0Lex_get_token(lex);
+            //return;
+        }//after do.
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
             || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE ||
             lex->last_token_type == TOKEN_CALL){
@@ -1125,12 +1146,12 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         }
         else if(lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_SEMICOLON
             ||lex->last_token_type == TOKEN_END){
-            printf("'while' without statement.\n");
+            printf("'while' without 'statement',line:%d\n",lex->line_number);
             pop(taxstack);
             print_stack(taxstack);
         }
         else{
-            printf("'while' statement with illegal statement.\n");
+            printf("'while' with illegal statement.line:%d\n",lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                     lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
                     //Ignore until Follow of F, ';' or '.' or 'end'.
@@ -1230,7 +1251,9 @@ void condition(PL0Lex * lex){ //analysis the condition statement 'O(spell 'eu')'
         expression(lex);//Connote rm of 'X'
         if(lex->last_token_type==TOKEN_PERIOD||lex->last_token_type == TOKEN_SEMICOLON
             || lex->last_token_type==TOKEN_END || lex->last_token_type == TOKEN_THEN 
-            || lex->last_token_type == TOKEN_DO){
+            || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_CALL
+            || lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_BEGIN
+            || lex->last_token_type == TOKEN_IF || lex->last_token_type == TOKEN_WHILE){
             printf("Warning: condition with only single expression.\n");
             pop(taxstack);
             print_stack(taxstack);//rm 'Q' with epsilon
