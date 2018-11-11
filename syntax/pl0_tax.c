@@ -1088,7 +1088,7 @@ void statement(PL0Lex * lex){ //analysis the statement F, return only when meet 
         if(lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type == TOKEN_PERIOD
             ||lex->last_token_type == TOKEN_END){
             // condition reutrn because of ';' or '.'
-            printf("'if' expression without 'do'.\n");
+            printf("'if' expression without 'then'.\n");
             pop(taxstack);
             pop(taxstack);
             print_stack(taxstack);
