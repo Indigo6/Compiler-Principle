@@ -534,9 +534,9 @@ void const_declaration(PL0Lex * lex) { //A
 	} else {
 		printf("There must be an identifier to follow 'const' at line %d\n",lex->line_number);
 		pop(taxstack);//pop A
-		do{
+		while(lex->last_token_type!=TOKEN_SEMICOLON){
 		    PL0Lex_get_token(lex);
-		}while(lex->last_token_type!=TOKEN_SEMICOLON);
+		}
 		print_stack(taxstack);
         return;
 	}
