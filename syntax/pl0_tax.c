@@ -10,6 +10,7 @@ const char* lexLabel[] = {"P","B","D",".","S","C","V","R","const","A",";","id","
                           "end","if","O","then","while","do","odd","X","Q","!=","<=",">=",
                           "<",">","T","G","+","-","*","/","Y","Z","(",")"};
 stack* taxstack ;
+int pairFlag = 0;
 int table_index = 0;
 /*operations for token table*/
 void table_append(PL0Lex * lex, int kind) {
@@ -97,10 +98,26 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
 	    //print_stack(taxstack);
 	}//some error ...
 
-    if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
+    if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH ) {
         pop(taxstack);
         print_stack(taxstack);
         return;
+    }
+    else if(lex->last_token_type == TOKEN_RPAREN){
+        if(pairFlag){
+            pop(taxstack);
+            print_stack(taxstack);
+            pairFlag = 0;
+            return;
+        }
+        else {
+            printf("Unpaired ) at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
+                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
+            //Ignore until Follow of F, ';' or '.' or 'end'.
+            pop(taxstack);
+            return;
+        }
     }
     else {
         printf("Expected 'X.FOLLOW' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
@@ -293,7 +310,6 @@ void Z(PL0Lex * lex){
 	}
 	else{
         if(lex->last_token_type == TOKEN_EQU || lex->last_token_type == TOKEN_NEQ || lex->last_token_type == TOKEN_RPAREN || lex->last_token_type == TOKEN_PLUS || lex->last_token_type == TOKEN_MINUS ||  lex->last_token_type == TOKEN_LES || lex->last_token_type == TOKEN_LEQ || lex->last_token_type == TOKEN_GTR || lex->last_token_type == TOKEN_GEQ || lex->last_token_type == TOKEN_SEMICOLON ||  lex->last_token_type == TOKEN_PERIOD || lex->last_token_type == TOKEN_THEN || lex->last_token_type == TOKEN_DO || lex->last_token_type == TOKEN_TIMES || lex->last_token_type == TOKEN_SLASH || lex->last_token_type == TOKEN_RPAREN) {
-
             return;
         }
         else {
@@ -393,7 +409,7 @@ void factor(PL0Lex * lex) {//yinzi
 		print_stack(taxstack);
 		pop(taxstack);
 		print_stack(taxstack);
-
+        pairFlag = 1;
 
 		PL0Lex_get_token(lex);
         if(lex->last_token_type == TOKEN_IDENTIFIER || lex->last_token_type == TOKEN_NUMBER || lex->last_token_type == TOKEN_MINUS || lex->last_token_type == TOKEN_LPAREN) {
@@ -410,12 +426,13 @@ void factor(PL0Lex * lex) {//yinzi
         }
 
 
-        if(lex->last_token_type == TOKEN_RPAREN) {
+        if(lex->last_token_type == TOKEN_RPAREN) {//ONLY LEGAL )
             pop(taxstack);
             print_stack(taxstack);
             PL0Lex_get_token(lex);//)
             return;
         } else {
+            pairFlag = 0;
             printf("Expected ) at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
             while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
                                              lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
