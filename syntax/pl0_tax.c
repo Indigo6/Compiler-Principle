@@ -112,9 +112,10 @@ void expression(PL0Lex * lex) {//表达shi X,产生式：X->TG
         }
         else {
             printf("Unpaired ) at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             return;
         }
@@ -314,9 +315,10 @@ void Z(PL0Lex * lex){
         }
         else {
             printf("Expected 'Z.FOOLOW' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             pop(taxstack);
             return;
@@ -343,9 +345,10 @@ void factor(PL0Lex * lex) {//yinzi
             }
             else {
                 printf("Expected 'Y.FOLLOW' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-                while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                                 lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-                //Ignore until Follow of F, ';' or '.' or 'end'.
+                while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                        lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                        lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+                //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
                 pop(taxstack);
                 return;
             }
@@ -363,9 +366,10 @@ void factor(PL0Lex * lex) {//yinzi
             return;
         } else {
             printf("Expected 'Y.FOLLOW' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             return;
         }
@@ -382,9 +386,10 @@ void factor(PL0Lex * lex) {//yinzi
         }
         else {
             printf("Expected expression at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             return;
         }
@@ -394,9 +399,10 @@ void factor(PL0Lex * lex) {//yinzi
             return;
         } else {
             printf("Expected 'Y.FOLLOW' at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             return;
         }
@@ -417,9 +423,10 @@ void factor(PL0Lex * lex) {//yinzi
         }
         else {
             printf("Expected expression at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             pop(taxstack);
             return;
@@ -434,9 +441,10 @@ void factor(PL0Lex * lex) {//yinzi
         } else {
             pairFlag = 0;
             printf("Expected ) at %d:%d,line:%d.\n",lex->start,lex->end,lex->line_number);
-            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD||
-                                             lex->last_token_type == TOKEN_SEMICOLON || lex->last_token_type==TOKEN_END));
-            //Ignore until Follow of F, ';' or '.' or 'end'.
+            while(PL0Lex_get_token(lex) && !(lex->last_token_type==TOKEN_PERIOD|| lex->last_token_type == TOKEN_SEMICOLON ||
+                                             lex->last_token_type==TOKEN_END || lex->last_token_type==TOKEN_IDENTIFIER || lex->last_token_type==TOKEN_CALL ||
+                                             lex->last_token_type==TOKEN_BEGIN || lex->last_token_type==TOKEN_IF || lex->last_token_type==TOKEN_WHILE));
+            //Ignore until Follow of F, ';' or '.' or 'end' or F.FIRST.
             pop(taxstack);
             return;
         }
