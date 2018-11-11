@@ -514,9 +514,12 @@ void const_declaration(PL0Lex * lex) { //A
 				pop(taxstack); //pop num
 				pop(taxstack); // pop W
                 //pop(taxstack);
-                do{  // like gcc , skip all token until ";"
+                //do{  // like gcc , skip all token until ";"
+                  //  PL0Lex_get_token(lex);
+                //}while(lex->last_token_type!=TOKEN_SEMICOLON);
+                while(lex->last_token_type!=TOKEN_SEMICOLON){
                     PL0Lex_get_token(lex);
-                }while(lex->last_token_type!=TOKEN_SEMICOLON);
+                }
                 print_stack(taxstack);
                 return;
 			}
@@ -525,9 +528,12 @@ void const_declaration(PL0Lex * lex) { //A
             pop(taxstack);//pop =
             pop(taxstack); //pop num
             pop(taxstack); //pop W
-            do{
+            //do{
+              //  PL0Lex_get_token(lex);
+            //}while(lex->last_token_type!=TOKEN_SEMICOLON);
+            while(lex->last_token_type!=TOKEN_SEMICOLON){
                 PL0Lex_get_token(lex);
-            }while(lex->last_token_type!=TOKEN_SEMICOLON);
+            }
             print_stack(taxstack);
             return;
 		}
@@ -572,7 +578,7 @@ void variable_declaration(PL0Lex * lex){ //E
         print_stack(taxstack);
         PL0Lex_get_token(lex);
         if(lex->last_token_type!=TOKEN_COMMA && lex->last_token_type!=TOKEN_SEMICOLON){
-            printf("missing ',' or ';' at line %d\n",lex->line_number);
+            printf("missing ',' or ';' around line %d\n",lex->line_number);
             pop(taxstack); //pop H
             do{
                 PL0Lex_get_token(lex);
@@ -588,9 +594,12 @@ void variable_declaration(PL0Lex * lex){ //E
     else{
         printf("There must be an identifier to follow 'var' at line %d\n",lex->line_number);
         pop(taxstack); // pop E
-        do{
+        //do{
+          //  PL0Lex_get_token(lex);
+        //}while(lex->last_token_type!=TOKEN_SEMICOLON);
+        while(lex->last_token_type!=TOKEN_SEMICOLON){
             PL0Lex_get_token(lex);
-        }while(lex->last_token_type!=TOKEN_SEMICOLON);
+        }
         print_stack(taxstack);
     }
 }//variable_declaration
