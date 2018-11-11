@@ -1,30 +1,30 @@
-const m = 7, n = 85 /*miss token: ';'*/
-var x, y, z, q r; /*miss token: ','*/
-const ; /*miss successor: const ident*/
+const m = 7, n = 85;
+var x, y, z, q, r;
 
-procedure ; /*miss successor: procedure ident*/
+procedure multiply;
 var a, b;
 begin
-	a := x; b := y; z := 0;
+	a := (x + y / z); b := y * q + z; z := 0;
 	while b > 0 do
 	begin
-		if odd b then z := z + a) * 1; /*matching error: left bracket*/
+		if odd b then z := z + a;
 		a := 2 * a; b := b / 2;
 	end;
 end;
 
 procedure gcd;
-var ; /*miss successor: var ident*/
+var f, g;
 begin
-	f x; /*miss successor: ident :=*/
+	f := x;
 	g := y;
-	while f != g /*matching error: while do*/
+	while f != g do
 	begin
-		if f < g  g := g - f; /*matching error: if then*/
+		if f < g then g := g - f;
 		if g < f then f := f - g;
-end; /*matching error: begin end*/
+	end;
+end;
 
 begin
 	x := m; y := n; call multiply;
 	x := 34; y := 36; call gcd;
-end /*miss token: '.'*/
+end.
