@@ -490,7 +490,14 @@ void const_declaration(PL0Lex * lex) { //A
 				print_stack(taxstack); // reduce number
 				PL0Lex_get_token(lex);
 				if(lex->last_token_type!=TOKEN_COMMA && lex->last_token_type!=TOKEN_SEMICOLON){
+				    if(lex->last_token_type==TOKEN_VAR||lex->last_token_type==TOKEN_PROCEDURE||
+				    lex->last_token_type==TOKEN_CALL||lex->last_token_type==TOKEN_BEGIN||
+				    lex->last_token_type==TOKEN_IF||lex->last_token_type==TOKEN_WHILE){
+                        printf("missing ';' around line %d\n",lex->line_number);
+				    }
+				    else{
                     printf("missing ',' or ';' around line %d\n",lex->line_number);
+				    }
                     pop(taxstack); // pop W
                     print_stack(taxstack);
                     do{
