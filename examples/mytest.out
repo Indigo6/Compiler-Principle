@@ -1,0 +1,9 @@
+JMP 4
+PUT 4
+ST 0
+LD 0
+PUT 4
+ADD
+ST 0
+LD 4
+INT 0

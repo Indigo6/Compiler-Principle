@@ -1,0 +1,7 @@
+var i, j;
+begin
+  i := -1;
+  j := i + 1;
+  do i := 1
+  while odd 1;
+end.

@@ -1,0 +1,9 @@
+build/*
+.vscode/*
+cmake-build-debug/*
+.idea/*
+examples/mytest.pl
+examples/emm.pl
+examples/mout.asm
+examples/output.asm
+syntax/cmake-build-debug/*
