@@ -2,6 +2,9 @@ var i, j;
 begin
   i := -1;
   j := i + 1;
+<<<<<<< HEAD
   do i := 1
   while odd 1;
+=======
+>>>>>>> 67062ac6f51b3d07f818def67dca73fa2b86ceca
 end.

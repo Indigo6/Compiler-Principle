@@ -7,3 +7,6 @@ examples/emm.pl
 examples/mout.asm
 examples/output.asm
 syntax/cmake-build-debug/*
+examples/mytest.txt
+examples/emm.txt
+syntax/cmake-build-debug/*

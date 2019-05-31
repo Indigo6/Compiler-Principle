@@ -22,6 +22,7 @@ begin
 	begin
 		if f < g  g := g - f; /*matching error: if then*/
 		if g < f then f := f - g;
+<<<<<<< HEAD
     end;
 
     begin
@@ -33,3 +34,11 @@ begin
 /*miss token: ';'*/
 /*warning: code without 'block'*/
 
+=======
+end; /*matching error: begin end*/
+
+begin
+	x := m; y := n; call multiply;
+	x := 34; y := 36; call gcd;
+end /*miss token: '.'*/
+>>>>>>> 67062ac6f51b3d07f818def67dca73fa2b86ceca

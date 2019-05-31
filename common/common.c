@@ -3,7 +3,10 @@
 #include "../lex/pl0_lex.h"
 
 FILE * fin;
+<<<<<<< HEAD
 FILE * fout;
+=======
+>>>>>>> 67062ac6f51b3d07f818def67dca73fa2b86ceca
 PL0Compiler * compiler;
 
 PL0Compiler * PL0Compiler_create()
